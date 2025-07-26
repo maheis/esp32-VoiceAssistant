@@ -101,6 +101,17 @@ button:
     id: factory_reset_btn
     internal: true
 
+sensor:
+  - platform: aht10
+    i2c_id: bus_b
+    variant: AHT20
+    temperature:
+      name: "Temperature"
+      id: s3temp
+    humidity:
+      name: "Humidity"
+    update_interval: 60s
+
 binary_sensor:
   - platform: gpio
     pin:
@@ -136,8 +147,21 @@ light:
     default_transition_length: 250ms
 
 i2c:
-  scl: GPIO18
-  sda: GPIO8
+  - id: bus_a
+    scl: GPIO18
+    sda: GPIO8
+    scan: false
+    sda_pullup_enabled: true
+    scl_pullup_enabled: true
+    frequency: 100kHz
+
+  - id: bus_b
+    sda: GPIO41
+    scl: GPIO40
+    scan: false
+    sda_pullup_enabled: true
+    scl_pullup_enabled: true
+    frequency: 50kHz
 
 i2s_audio:
   - id: i2s_audio_bus
@@ -148,12 +172,14 @@ i2s_audio:
 audio_adc:
   - platform: es7210
     id: es7210_adc
+    i2c_id: bus_a
     bits_per_sample: 16bit
     sample_rate: 16000
 
 audio_dac:
   - platform: es8311
     id: es8311_dac
+    i2c_id: bus_a
     bits_per_sample: 16bit
     sample_rate: 48000
 
