@@ -28,8 +28,8 @@ substitutions:
 
   # These unique characters have been extracted from every test file of every language available on https://github.com/home-assistant/intents (14 March 2024)
   # However, the Roboto font only contains Latin characters, so there is no point using this... unlessyou change the font configuration accordingly.
-  allowed_characters: " !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_abcdefghijklmnopqrstuvwxyz{|}°ÄÖÜäöüß"
-  
+  allowed_characters: " !#$%&\"'()*+,-.\\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]_abcdefghijklmnopqrstuvwxyz{|}°ÄÖÜäöüß"
+ 
   # Add support for non-unicode characters by using better glyphset
   font_glyphsets: "GF_Latin_Core"
   # for Greek use "Noto Sans" for other languages use a compatible font family
@@ -257,6 +257,7 @@ micro_wake_word:
     - okay_nabu
     - hey_mycroft
     - hey_jarvis
+    - alexa
   on_wake_word_detected:
     - voice_assistant.start:
         wake_word: !lambda return wake_word;
