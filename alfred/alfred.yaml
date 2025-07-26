@@ -1,13 +1,17 @@
 substitutions:
   name: tc14
   friendly_name: tc14
-  loading_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/loading_320_240.png
-  idle_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/idle_320_240.png
-  listening_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/listening_320_240.png
-  thinking_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/thinking_320_240.png
-  replying_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/replying_320_240.png
-  error_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/error_320_240.png
-  timer_finished_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/timer_finished_320_240.png
+  loading_illustration_file: http://192.168.5.45:8123/local/images/loading_320_240.png
+  idle_illustration_file: http://192.168.5.45:8123/local/images/idle_320_240.png
+  listening_illustration_file: http://192.168.5.45:8123/local/images/listening_320_240.png
+  thinking_illustration_file: http://192.168.5.45:8123/local/images/thinking_320_240.png
+  replying_illustration_file: http://192.168.5.45:8123/local/images/replying_320_240.png
+  error_illustration_file: http://192.168.5.45:8123/local/images/error_320_240.png
+  timer_finished_illustration_file: http://192.168.5.45:8123/local/images/timer_finished_320_240.png
+  
+  # wakeword_sound: 'http://192.168.5.45:8123/local/sounds/wakeword.mp3'
+  # success_sound: 'http://192.168.5.45:8123/local/sounds/success.mp3'
+  # error_sound: 'http://192.168.5.45:8123/local/sounds/error.mp3'
 
   loading_illustration_background_color: "000000"
   idle_illustration_background_color: "000000"
@@ -216,7 +220,7 @@ media_player:
       num_channels: 1 # S3 Box only has one output channel
     files:
       - id: timer_finished_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/timer_finished.flac
+        file: http://192.168.5.45:8123/local/sounds/timer_finished.flac
     on_announcement:
       # Stop the wake word (mWW or VA) if the mic is capturing
       - if:
@@ -721,12 +725,12 @@ image:
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: https://github.com/esphome/wake-word-voice-assistants/raw/main/error_box_illustrations/error-no-wifi.png
+  - file: http://192.168.5.45:8123/local/images/error-no-wifi_320_240.png
     id: error_no_wifi
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: https://github.com/esphome/wake-word-voice-assistants/raw/main/error_box_illustrations/error-no-ha.png
+  - file: http://192.168.5.45:8123/local/images/error-no-ha_320_240.png
     id: error_no_ha
     resize: 320x240
     type: RGB
