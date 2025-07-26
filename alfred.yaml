@@ -15,6 +15,7 @@ substitutions:
   thinking_illustration_background_color: "FFFFFF"
   replying_illustration_background_color: "FFFFFF"
   error_illustration_background_color: "000000"
+  time_font_color: "FFB74D"
 
   voice_assist_idle_phase_id: "1"
   voice_assist_listening_phase_id: "2"
@@ -332,6 +333,15 @@ voice_assistant:
         media_player.is_announcing:
     - lambda: id(voice_assistant_phase) = ${voice_assist_timer_finished_phase_id};
     - script.execute: draw_display
+
+time:
+  - platform: homeassistant
+    id: ha_time
+
+interval:
+  - interval: 60s
+    then:
+      - script.execute: draw_display
 
 script:
   - id: draw_display
@@ -699,9 +709,8 @@ font:
       type: gfonts
       family: ${font_family}
       weight: 300
-      italic: true
     id: font_request
-    size: 15
+    size: 20
     glyphsets:
       - ${font_glyphsets}
   - file:
@@ -709,7 +718,7 @@ font:
       family: ${font_family}
       weight: 300
     id: font_response
-    size: 15
+    size: 20
     glyphsets:
       - ${font_glyphsets}
   - file:
@@ -718,6 +727,14 @@ font:
       weight: 300
     id: font_timer
     size: 30
+    glyphsets:
+      - ${font_glyphsets}
+  - file:
+      type: gfonts
+      family: ${font_family}
+      weight: 600
+    id: font_time
+    size: 111
     glyphsets:
       - ${font_glyphsets}
 
@@ -759,6 +776,9 @@ color:
     hex: "26ed3a"
   - id: paused_timer_color
     hex: "3b89e3"
+  - id: time_font_color
+    hex: ${time_font_color}
+
 
 spi:
   - id: spi_bus
@@ -782,6 +802,7 @@ display:
         lambda: |-
           it.fill(id(idle_color));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_idle), ImageAlign::CENTER);
+          it.strftime(20, 0, id(font_time), id(time_font_color), "%H:%M", id(ha_time).now());
           id(draw_timer_timeline).execute();
           id(draw_active_timer_widget).execute();
       - id: listening_page
