@@ -1,13 +1,13 @@
 substitutions:
   name: tc14
   friendly_name: tc14
-  loading_file: http://192.168.5.45:8123/local/images/loading_320_240.png
-  idle_file: http://192.168.5.45:8123/local/images/idle_320_240.png
-  listening_file: http://192.168.5.45:8123/local/images/listening_320_240.png
-  thinking_file: http://192.168.5.45:8123/local/images/thinking_320_240.png
-  replying_file: http://192.168.5.45:8123/local/images/replying_320_240.png
-  error_file: http://192.168.5.45:8123/local/images/error_320_240.png
-  timer_finished_file: http://192.168.5.45:8123/local/images/timer_finished_320_240.png
+  loading_file: http://192.168.5.45:8123/local/images/loading.png
+  idle_file: http://192.168.5.45:8123/local/images/idle.png
+  listening_file: http://192.168.5.45:8123/local/images/listening.png
+  thinking_file: http://192.168.5.45:8123/local/images/thinking.png
+  replying_file: http://192.168.5.45:8123/local/images/replying.png
+  error_file: http://192.168.5.45:8123/local/images/error.png
+  timer_finished_file: http://192.168.5.45:8123/local/images/timer_finished.png
   
   wakeword_sound: http://192.168.5.45:8123/local/sounds/wakeword.mp3
   success_sound: http://192.168.5.45:8123/local/sounds/success.mp3
@@ -719,12 +719,12 @@ image:
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: http://192.168.5.45:8123/local/images/error-no-wifi_320_240.png
+  - file: http://192.168.5.45:8123/local/images/error-no-wifi.png
     id: error_no_wifi
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: http://192.168.5.45:8123/local/images/error-no-ha_320_240.png
+  - file: http://192.168.5.45:8123/local/images/error-no-ha.png
     id: error_no_ha
     resize: 320x240
     type: RGB
@@ -855,9 +855,11 @@ display:
           it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_error), ImageAlign::CENTER);
       - id: no_ha_page
         lambda: |-
+          it.fill(id(error_color));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(error_no_ha), ImageAlign::CENTER);
       - id: no_wifi_page
         lambda: |-
+          it.fill(id(error_color));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(error_no_wifi), ImageAlign::CENTER);
       - id: initializing_page
         lambda: |-
@@ -865,6 +867,6 @@ display:
           it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_initializing), ImageAlign::CENTER);
       - id: muted_page
         lambda: |-
-          it.fill(Color::BLACK);
+          it.fill(id(idle_color));
           id(draw_timer_timeline).execute();
           id(draw_active_timer_widget).execute();
