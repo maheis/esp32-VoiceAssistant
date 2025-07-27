@@ -487,14 +487,12 @@ script:
             id(fetch_first_active_timer).execute();
             int active_pixels = round( 320 * id(global_first_active_timer).seconds_left / max(id(global_first_active_timer).total_seconds , static_cast<uint32_t>(1)) );
             if (active_pixels > 0){
-              id(s3_box_lcd).filled_rectangle(0 , 225 , 320 , 15 , Color::WHITE );
               id(s3_box_lcd).filled_rectangle(0 , 226 , active_pixels , 13 , id(active_timer_color) );
             }
           } else if (id(global_is_timer)){
             id(fetch_first_timer).execute();
             int active_pixels = round( 320 * id(global_first_timer).seconds_left / max(id(global_first_timer).total_seconds , static_cast<uint32_t>(1)));
             if (active_pixels > 0){
-              id(s3_box_lcd).filled_rectangle(0 , 225 , 320 , 15 , Color::WHITE );
               id(s3_box_lcd).filled_rectangle(0 , 226 , active_pixels , 13 , id(paused_timer_color) );
             }
           }
@@ -503,9 +501,6 @@ script:
       - lambda: |
           id(check_if_timers_active).execute();
           if (id(global_is_timer_active)){
-            id(s3_box_lcd).filled_rectangle(80 , 40 , 160 , 50 , Color::WHITE );
-            id(s3_box_lcd).rectangle(80 , 40 , 160 , 50 , Color::BLACK );
-
             id(fetch_first_active_timer).execute();
             int hours_left = floor(id(global_first_active_timer).seconds_left / 3600);
             int minutes_left = floor((id(global_first_active_timer).seconds_left - hours_left * 3600) / 60);
@@ -520,7 +515,7 @@ script:
             } else {
               display_string = display_minute + ":" + display_seconds;
             }
-            id(s3_box_lcd).printf(120, 47, id(font_timer), Color::BLACK, "%s", display_string.c_str());
+            id(s3_box_lcd).printf((320/2), 170, id(font_timer), id(font_color), TextAlign::TOP_CENTER, "%s", display_string.c_str());
           }
   # Starts either mWW or the streaming wake word, depending on the configured location
   - id: start_wake_word
@@ -752,10 +747,10 @@ font:
     glyphs: ${allowed_characters}
   - file:
       type: gfonts
-      family: ${font_main}
-      weight: 300
+      family: ${font_mono}
+      weight: 600
     id: font_timer
-    size: 30
+    size: 50
     glyphs: ${allowed_characters}
   - file:
       type: gfonts
