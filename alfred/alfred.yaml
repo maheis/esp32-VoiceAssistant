@@ -9,9 +9,10 @@ substitutions:
   error_illustration_file: http://192.168.5.45:8123/local/images/error_320_240.png
   timer_finished_illustration_file: http://192.168.5.45:8123/local/images/timer_finished_320_240.png
   
-  # wakeword_sound: 'http://192.168.5.45:8123/local/sounds/wakeword.mp3'
-  # success_sound: 'http://192.168.5.45:8123/local/sounds/success.mp3'
-  # error_sound: 'http://192.168.5.45:8123/local/sounds/error.mp3'
+  wakeword_sound: http://192.168.5.45:8123/local/sounds/wakeword.mp3
+  success_sound: http://192.168.5.45:8123/local/sounds/success.mp3
+  error_sound: http://192.168.5.45:8123/local/sounds/error.mp3
+  timer_finished_sound : http://192.168.5.45:8123/local/sounds/zoot_chest_long.mp3
 
   loading_illustration_background_color: "000000"
   idle_illustration_background_color: "000000"
@@ -220,7 +221,7 @@ media_player:
       num_channels: 1 # S3 Box only has one output channel
     files:
       - id: timer_finished_sound
-        file: http://192.168.5.45:8123/local/sounds/timer_finished.flac
+        file: ${timer_finished_sound}
     on_announcement:
       # Stop the wake word (mWW or VA) if the mic is capturing
       - if:
@@ -263,6 +264,7 @@ micro_wake_word:
     - hey_jarvis
     - alexa
   on_wake_word_detected:
+    - media_player.play_media: ${wakeword_sound}
     - voice_assistant.start:
         wake_word: !lambda return wake_word;
 
@@ -331,6 +333,7 @@ voice_assistant:
         condition:
           lambda: return !id(init_in_progress);
         then:
+          - media_player.play_media: ${error_sound}
           - lambda: id(voice_assistant_phase) = ${voice_assist_error_phase_id};
           - script.execute: draw_display
           - delay: 1s
