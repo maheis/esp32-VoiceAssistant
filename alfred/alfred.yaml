@@ -1,26 +1,26 @@
 substitutions:
   name: tc14
   friendly_name: tc14
-  loading_illustration_file: http://192.168.5.45:8123/local/images/loading_320_240.png
-  idle_illustration_file: http://192.168.5.45:8123/local/images/idle_320_240.png
-  listening_illustration_file: http://192.168.5.45:8123/local/images/listening_320_240.png
-  thinking_illustration_file: http://192.168.5.45:8123/local/images/thinking_320_240.png
-  replying_illustration_file: http://192.168.5.45:8123/local/images/replying_320_240.png
-  error_illustration_file: http://192.168.5.45:8123/local/images/error_320_240.png
-  timer_finished_illustration_file: http://192.168.5.45:8123/local/images/timer_finished_320_240.png
+  loading_file: http://192.168.5.45:8123/local/images/loading_320_240.png
+  idle_file: http://192.168.5.45:8123/local/images/idle_320_240.png
+  listening_file: http://192.168.5.45:8123/local/images/listening_320_240.png
+  thinking_file: http://192.168.5.45:8123/local/images/thinking_320_240.png
+  replying_file: http://192.168.5.45:8123/local/images/replying_320_240.png
+  error_file: http://192.168.5.45:8123/local/images/error_320_240.png
+  timer_finished_file: http://192.168.5.45:8123/local/images/timer_finished_320_240.png
   
   wakeword_sound: http://192.168.5.45:8123/local/sounds/wakeword.mp3
   success_sound: http://192.168.5.45:8123/local/sounds/success.mp3
   error_sound: http://192.168.5.45:8123/local/sounds/error.mp3
   timer_finished_sound : http://192.168.5.45:8123/local/sounds/zoot_chest_long.mp3
 
-  loading_illustration_background_color: "000000"
-  idle_illustration_background_color: "000000"
-  listening_illustration_background_color: "FFFFFF"
-  thinking_illustration_background_color: "FFFFFF"
-  replying_illustration_background_color: "FFFFFF"
-  error_illustration_background_color: "000000"
-  time_font_color: "FFB74D"
+  loading_background_color: "000000"
+  idle_background_color: "000000"
+  listening_background_color: "FFFFFF"
+  thinking_background_color: "FFFFFF"
+  replying_background_color: "FFFFFF"
+  error_background_color: "000000"
+  font_color: "FFB74D"
 
   voice_assist_idle_phase_id: "1"
   voice_assist_listening_phase_id: "2"
@@ -31,12 +31,8 @@ substitutions:
   voice_assist_muted_phase_id: "12"
   voice_assist_timer_finished_phase_id: "20"
 
-  # These unique characters have been extracted from every test file of every language available on https://github.com/home-assistant/intents (14 March 2024)
-  # However, the Roboto font only contains Latin characters, so there is no point using this... unlessyou change the font configuration accordingly.
   allowed_characters: " !#$%&\"'()*+,-.\\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]_abcdefghijklmnopqrstuvwxyz{|}°ÄÖÜäöüß"
  
-  # Add support for non-unicode characters by using better glyphset
-  font_glyphsets: "GF_Latin_Core"
   # for Greek use "Noto Sans" for other languages use a compatible font family
   font_main: Roboto
   font_mono: Roboto Mono
@@ -693,37 +689,37 @@ globals:
     restore_value: false
 
 image:
-  - file: ${error_illustration_file}
+  - file: ${error_file}
     id: casita_error
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${idle_illustration_file}
+  - file: ${idle_file}
     id: casita_idle
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${listening_illustration_file}
+  - file: ${listening_file}
     id: casita_listening
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${thinking_illustration_file}
+  - file: ${thinking_file}
     id: casita_thinking
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${replying_illustration_file}
+  - file: ${replying_file}
     id: casita_replying
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${timer_finished_illustration_file}
+  - file: ${timer_finished_file}
     id: casita_timer_finished
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${loading_illustration_file}
+  - file: ${loading_file}
     id: casita_initializing
     resize: 320x240
     type: RGB
@@ -746,32 +742,28 @@ font:
       weight: 300
     id: font_request
     size: 20
-    glyphsets:
-      - ${font_glyphsets}
+    glyphs: ${allowed_characters}
   - file:
       type: gfonts
       family: ${font_main}
       weight: 300
     id: font_response
     size: 20
-    glyphsets:
-      - ${font_glyphsets}
+    glyphs: ${allowed_characters}
   - file:
       type: gfonts
       family: ${font_main}
       weight: 300
     id: font_timer
     size: 30
-    glyphsets:
-      - ${font_glyphsets}
+    glyphs: ${allowed_characters}
   - file:
       type: gfonts
       family: ${font_mono}
       weight: 600
     id: font_time
     size: 107
-    glyphsets:
-      - ${font_glyphsets}
+    glyphs: ${allowed_characters}
 
 text_sensor:
   - id: text_request
@@ -796,23 +788,23 @@ text_sensor:
 
 color:
   - id: idle_color
-    hex: ${idle_illustration_background_color}
+    hex: ${idle_background_color}
   - id: listening_color
-    hex: ${listening_illustration_background_color}
+    hex: ${listening_background_color}
   - id: thinking_color
-    hex: ${thinking_illustration_background_color}
+    hex: ${thinking_background_color}
   - id: replying_color
-    hex: ${replying_illustration_background_color}
+    hex: ${replying_background_color}
   - id: loading_color
-    hex: ${loading_illustration_background_color}
+    hex: ${loading_background_color}
   - id: error_color
-    hex: ${error_illustration_background_color}
+    hex: ${error_background_color}
   - id: active_timer_color
     hex: "26ed3a"
   - id: paused_timer_color
     hex: "3b89e3"
-  - id: time_font_color
-    hex: ${time_font_color}
+  - id: font_color
+    hex: ${font_color}
 
 
 spi:
@@ -837,7 +829,7 @@ display:
         lambda: |-
           it.fill(id(idle_color));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_idle), ImageAlign::CENTER);
-          it.strftime(2, 0, id(font_time), id(time_font_color), "%H:%M", id(ha_time).now());
+          it.strftime((320 / 2), 0, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
           id(draw_timer_timeline).execute();
           id(draw_active_timer_widget).execute();
       - id: listening_page
@@ -849,20 +841,14 @@ display:
         lambda: |-
           it.fill(id(thinking_color));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_thinking), ImageAlign::CENTER);
-          it.filled_rectangle(20 , 20 , 280 , 30 , Color::WHITE );
-          it.rectangle(20 , 20 , 280 , 30 , Color::BLACK );
-          it.printf(30, 25, id(font_request), Color::BLACK, "%s", id(text_request).state.c_str());
+          it.printf((320 / 2), 25, id(font_request), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_request).state.c_str());
           id(draw_timer_timeline).execute();
       - id: replying_page
         lambda: |-
           it.fill(id(replying_color));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_replying), ImageAlign::CENTER);
-          it.filled_rectangle(20 , 20 , 280 , 30 , Color::WHITE );
-          it.rectangle(20 , 20 , 280 , 30 , Color::BLACK );
-          it.filled_rectangle(20 , 190 , 280 , 30 , Color::WHITE );
-          it.rectangle(20 , 190 , 280 , 30 , Color::BLACK );
-          it.printf(30, 25, id(font_request), Color::BLACK, "%s", id(text_request).state.c_str());
-          it.printf(30, 195, id(font_response), Color::BLACK, "%s", id(text_response).state.c_str());
+          it.printf((320 / 2), 25, id(font_request), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_request).state.c_str());
+          it.printf((320 / 2), 195, id(font_response), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_response).state.c_str());
           id(draw_timer_timeline).execute();
       - id: timer_finished_page
         lambda: |-
