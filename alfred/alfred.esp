@@ -40,6 +40,7 @@ substitutions:
   voice_assist_error_phase_id: "11"
   voice_assist_muted_phase_id: "12"
   voice_assist_timer_finished_phase_id: "20"
+  settings_phase_id: "99"
 
   allowed_characters: " !#$%&\"'()*+,-.\\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]_abcdefghijklmnopqrstuvwxyz{|}°ÄÖÜäöüß"
 
@@ -156,18 +157,52 @@ binary_sensor:
       number: GPIO1
       mode: INPUT_PULLUP
       inverted: true
-    disabled_by_default: true
     on_state:
-      then:
-        - if:
-            condition:
-              switch.is_off: mute
-            then:
-              - switch.turn_on: mute
-            else:
-              - switch.turn_off: mute
-              - button.press: factory_reset_button
-       
+      - if:
+          condition:
+            switch.is_off: mute
+          then:
+            - switch.turn_on: mute
+          else:
+            - switch.turn_off: mute
+            - button.press: factory_reset_button
+  # touch_prev_button
+  - id: touch_prev_button
+    platform: touchscreen
+    internal: true
+    x_min: 0
+    x_max: 70
+    y_min: 170
+    y_max: 240
+    on_press:
+      - if:
+          condition: 
+            lambda: return id(voice_assistant_phase) != ${settings_phase_id};
+          then:
+            - lambda: id(voice_assistant_phase) = ${settings_phase_id};
+            - script.execute: draw_display
+          else:
+            - script.execute: set_idle_or_mute_phase
+            - script.execute: draw_display
+  # touch_next_button
+  - id: touch_next_button
+    platform: touchscreen
+    internal: true
+    x_min: 250
+    x_max: 320
+    y_min: 170
+    y_max: 240
+    on_press:
+      - if:
+          condition: 
+            lambda: return id(voice_assistant_phase) != ${settings_phase_id};
+          then:
+            - lambda: id(voice_assistant_phase) = ${settings_phase_id};
+            - script.execute: draw_display
+          else:
+            - script.execute: set_idle_or_mute_phase
+            - script.execute: draw_display
+
 output:
   - platform: ledc
     pin: GPIO47
@@ -463,6 +498,10 @@ script:
                                 break;
                               case ${voice_assist_timer_finished_phase_id}:
                                 id(s3_box_lcd).show_page(timer_finished_page);
+                                id(s3_box_lcd).update();
+                                break;
+                              case ${settings_phase_id}:
+                                id(s3_box_lcd).show_page(settings_page);
                                 id(s3_box_lcd).update();
                                 break;
                               default:
@@ -915,5 +954,11 @@ display:
           it.fill(id(idle_color));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_muted), ImageAlign::CENTER);
           it.strftime((320 / 2), -10, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
+          id(draw_timer_timeline).execute();
+          id(draw_active_timer_widget).execute();
+      - id: settings_page
+        lambda: |-
+          it.fill(id(idle_color));
+          it.printf((320 / 2), 25, id(font_text), id(font_color), TextAlign::TOP_CENTER, "Settings");
           id(draw_timer_timeline).execute();
           id(draw_active_timer_widget).execute();
