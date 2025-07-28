@@ -1,18 +1,21 @@
 substitutions:
   name: tc14
   friendly_name: tc14
-  loading_file: http://192.168.5.45:8123/local/images/loading.png
+  error_no_wifi_file: http://192.168.5.45:8123/local/images/error-no-wifi.png
+  error_no_ha_file: http://192.168.5.45:8123/local/images/error-no-ha.png
+  error_file: http://192.168.5.45:8123/local/images/error.png
   idle_file: http://192.168.5.45:8123/local/images/idle.png
   listening_file: http://192.168.5.45:8123/local/images/listening.png
-  thinking_file: http://192.168.5.45:8123/local/images/thinking.png
+  loading_file: http://192.168.5.45:8123/local/images/loading.png
+  muted_file: http://192.168.5.45:8123/local/images/muted.png
   replying_file: http://192.168.5.45:8123/local/images/replying.png
-  error_file: http://192.168.5.45:8123/local/images/error.png
+  thinking_file: http://192.168.5.45:8123/local/images/thinking.png
   timer_finished_file: http://192.168.5.45:8123/local/images/timer_finished.png
-  
+
   wakeword_sound: http://192.168.5.45:8123/local/sounds/wakeword.mp3
   success_sound: http://192.168.5.45:8123/local/sounds/success.mp3
   error_sound: http://192.168.5.45:8123/local/sounds/error.mp3
-  timer_finished_sound : http://192.168.5.45:8123/local/sounds/zoot_chest_long.mp3
+  timer_finished_sound: http://192.168.5.45:8123/local/sounds/zoot_chest_long.mp3
 
   loading_background_color: "000000"
   idle_background_color: "000000"
@@ -32,8 +35,7 @@ substitutions:
   voice_assist_timer_finished_phase_id: "20"
 
   allowed_characters: " !#$%&\"'()*+,-.\\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]_abcdefghijklmnopqrstuvwxyz{|}°ÄÖÜäöüß"
- 
-  # for Greek use "Noto Sans" for other languages use a compatible font family
+
   font_main: Roboto
   font_mono: Roboto Mono
 
@@ -70,7 +72,6 @@ psram:
   mode: octal
   speed: 80MHz
 
-# Enable Home Assistant API
 api:
   on_client_connected:
     - script.execute: draw_display
@@ -261,6 +262,13 @@ micro_wake_word:
     - alexa
   on_wake_word_detected:
     - media_player.play_media: ${wakeword_sound}
+    - wait_until:
+        condition:
+          not: media_player.is_idle
+        timeout: 2sec
+    - wait_until:
+        condition: media_player.is_idle
+        timeout: 2sec
     - voice_assistant.start:
         wake_word: !lambda return wake_word;
 
@@ -295,6 +303,11 @@ voice_assistant:
         state: !lambda return x;
     - lambda: id(voice_assistant_phase) = ${voice_assist_replying_phase_id};
     - script.execute: draw_display
+    # - media_player.play_media: !lambda if(x.rfind("Sorry", 0) == 0) return "${error_sound}"; return "${success_sound}";
+    # - wait_until:
+    #     condition:
+    #       media_player.is_idle
+    #     timeout: 2sec
   on_end:
     # Wait a short amount of time to see if an announcement starts
     - wait_until:
@@ -685,47 +698,52 @@ globals:
 
 image:
   - file: ${error_file}
-    id: casita_error
+    id: image_error
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+  - file: ${error_no_wifi_file}
+    id: image_error_no_wifi
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+  - file: ${error_no_ha_file}
+    id: image_error_no_ha
     resize: 320x240
     type: RGB
     transparency: alpha_channel
   - file: ${idle_file}
-    id: casita_idle
+    id: image_idle
     resize: 320x240
     type: RGB
     transparency: alpha_channel
   - file: ${listening_file}
-    id: casita_listening
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${thinking_file}
-    id: casita_thinking
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${replying_file}
-    id: casita_replying
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${timer_finished_file}
-    id: casita_timer_finished
+    id: image_listening
     resize: 320x240
     type: RGB
     transparency: alpha_channel
   - file: ${loading_file}
-    id: casita_initializing
+    id: image_loading
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: http://192.168.5.45:8123/local/images/error-no-wifi.png
-    id: error_no_wifi
+  - file: ${muted_file}
+    id: image_muted
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: http://192.168.5.45:8123/local/images/error-no-ha.png
-    id: error_no_ha
+  - file: ${replying_file}
+    id: image_replying
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+  - file: ${thinking_file}
+    id: image_thinking
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+  - file: ${timer_finished_file}
+    id: image_timer_finished
     resize: 320x240
     type: RGB
     transparency: alpha_channel
@@ -801,7 +819,6 @@ color:
   - id: font_color
     hex: ${font_color}
 
-
 spi:
   - id: spi_bus
     clk_pin: 7
@@ -823,50 +840,52 @@ display:
       - id: idle_page
         lambda: |-
           it.fill(id(idle_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_idle), ImageAlign::CENTER);
+          it.image((it.get_width() / 2), (it.get_height() / 2), id(image_idle), ImageAlign::CENTER);
           it.strftime((320 / 2), 0, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
           id(draw_timer_timeline).execute();
           id(draw_active_timer_widget).execute();
       - id: listening_page
         lambda: |-
           it.fill(id(listening_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_listening), ImageAlign::CENTER);
+          it.image((it.get_width() / 2), (it.get_height() / 2), id(image_listening), ImageAlign::CENTER);
           id(draw_timer_timeline).execute();
       - id: thinking_page
         lambda: |-
           it.fill(id(thinking_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_thinking), ImageAlign::CENTER);
+          it.image((it.get_width() / 2), (it.get_height() / 2), id(image_thinking), ImageAlign::CENTER);
           it.printf((320 / 2), 25, id(font_request), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_request).state.c_str());
           id(draw_timer_timeline).execute();
       - id: replying_page
         lambda: |-
           it.fill(id(replying_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_replying), ImageAlign::CENTER);
+          it.image((it.get_width() / 2), (it.get_height() / 2), id(image_replying), ImageAlign::CENTER);
           it.printf((320 / 2), 25, id(font_request), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_request).state.c_str());
           it.printf((320 / 2), 195, id(font_response), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_response).state.c_str());
           id(draw_timer_timeline).execute();
       - id: timer_finished_page
         lambda: |-
           it.fill(id(idle_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_timer_finished), ImageAlign::CENTER);
+          it.image((it.get_width() / 2), (it.get_height() / 2), id(image_timer_finished), ImageAlign::CENTER);
       - id: error_page
         lambda: |-
           it.fill(id(error_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_error), ImageAlign::CENTER);
+          it.image((it.get_width() / 2), (it.get_height() / 2), id(image_error), ImageAlign::CENTER);
       - id: no_ha_page
         lambda: |-
           it.fill(id(error_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(error_no_ha), ImageAlign::CENTER);
+          it.image((it.get_width() / 2), (it.get_height() / 2), id(image_error_no_ha), ImageAlign::CENTER);
       - id: no_wifi_page
         lambda: |-
           it.fill(id(error_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(error_no_wifi), ImageAlign::CENTER);
+          it.image((it.get_width() / 2), (it.get_height() / 2), id(image_error_no_wifi), ImageAlign::CENTER);
       - id: initializing_page
         lambda: |-
           it.fill(id(loading_color));
-          it.image((it.get_width() / 2), (it.get_height() / 2), id(casita_initializing), ImageAlign::CENTER);
+          it.image((it.get_width() / 2), (it.get_height() / 2), id(image_loading), ImageAlign::CENTER);
       - id: muted_page
         lambda: |-
           it.fill(id(idle_color));
+          it.image((it.get_width() / 2), (it.get_height() / 2), id(image_muted), ImageAlign::CENTER);
+          it.strftime((320 / 2), 0, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
           id(draw_timer_timeline).execute();
           id(draw_active_timer_widget).execute();
