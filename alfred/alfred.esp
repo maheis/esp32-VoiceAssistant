@@ -24,22 +24,18 @@ substitutions:
   timer_finished_sound: http://${ip_address_HA}:8123/local/sounds/zoot_chest_long.mp3
   wakeword_sound: http://${ip_address_HA}:8123/local/sounds/wakeword.mp3
 
-  loading_background_color: "000000"
-  idle_background_color: "000000"
-  listening_background_color: "FFFFFF"
-  thinking_background_color: "FFFFFF"
-  replying_background_color: "FFFFFF"
-  error_background_color: "000000"
+  light_background: "F9F9F9"
+  dark_background: "212121"
   font_color: "FFB74D"
 
-  voice_assist_idle_phase_id: "1"
-  voice_assist_listening_phase_id: "2"
-  voice_assist_thinking_phase_id: "3"
-  voice_assist_replying_phase_id: "4"
-  voice_assist_not_ready_phase_id: "10"
-  voice_assist_error_phase_id: "11"
-  voice_assist_muted_phase_id: "12"
-  voice_assist_timer_finished_phase_id: "20"
+  idle_phase_id: "1"
+  listening_phase_id: "2"
+  thinking_phase_id: "3"
+  replying_phase_id: "4"
+  not_ready_phase_id: "10"
+  error_phase_id: "11"
+  muted_phase_id: "12"
+  timer_finished_phase_id: "20"
   settings_phase_id: "99"
 
   allowed_characters: " !#$%&\"'()*+,-.\\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]_abcdefghijklmnopqrstuvwxyz{|}°ÄÖÜäöüß"
@@ -319,7 +315,7 @@ media_player:
             not:
               voice_assistant.is_running:
           then:
-            - lambda: id(voice_assistant_phase) = ${voice_assist_muted_phase_id};
+            - lambda: id(voice_assistant_phase) = ${muted_phase_id};
             - script.execute: draw_display
     on_idle:
       # Since VA isn't running, this is the end of user-intiated media playback. Restart the wake word.
@@ -352,7 +348,7 @@ voice_assistant:
   auto_gain: 31dBFS
   volume_multiplier: 2.0
   on_listening:
-    - lambda: id(voice_assistant_phase) = ${voice_assist_listening_phase_id};
+    - lambda: id(voice_assistant_phase) = ${listening_phase_id};
     - text_sensor.template.publish:
         id: text_request
         state: "..."
@@ -361,7 +357,7 @@ voice_assistant:
         state: "..."
     - script.execute: draw_display
   on_stt_vad_end:
-    - lambda: id(voice_assistant_phase) = ${voice_assist_thinking_phase_id};
+    - lambda: id(voice_assistant_phase) = ${thinking_phase_id};
     - script.execute: draw_display
   on_stt_end:
     - text_sensor.template.publish:
@@ -372,7 +368,7 @@ voice_assistant:
     - text_sensor.template.publish:
         id: text_response
         state: !lambda return x;
-    - lambda: id(voice_assistant_phase) = ${voice_assist_replying_phase_id};
+    - lambda: id(voice_assistant_phase) = ${replying_phase_id};
     - script.execute: draw_display
   on_end:
     # Wait a short amount of time to see if an announcement starts
@@ -408,7 +404,7 @@ voice_assistant:
         condition:
           lambda: return !id(init_in_progress);
         then:
-          - lambda: id(voice_assistant_phase) = ${voice_assist_error_phase_id};
+          - lambda: id(voice_assistant_phase) = ${error_phase_id};
           - script.execute: draw_display
           - media_player.speaker.play_on_device_media_file:
               media_file: error_sound
@@ -418,9 +414,9 @@ voice_assistant:
               condition:
                 switch.is_off: mute
               then:
-                - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
+                - lambda: id(voice_assistant_phase) = ${idle_phase_id};
               else:
-                - lambda: id(voice_assistant_phase) = ${voice_assist_muted_phase_id};
+                - lambda: id(voice_assistant_phase) = ${muted_phase_id};
           - script.execute: draw_display
   on_client_connected:
     - lambda: id(init_in_progress) = false;
@@ -429,7 +425,7 @@ voice_assistant:
     - script.execute: draw_display
   on_client_disconnected:
     - script.execute: stop_wake_word
-    - lambda: id(voice_assistant_phase) = ${voice_assist_not_ready_phase_id};
+    - lambda: id(voice_assistant_phase) = ${not_ready_phase_id};
     - script.execute: draw_display
   on_timer_started:
     - script.execute: draw_display
@@ -443,7 +439,7 @@ voice_assistant:
     - switch.turn_on: timer_ringing
     - wait_until:
         media_player.is_announcing:
-    - lambda: id(voice_assistant_phase) = ${voice_assist_timer_finished_phase_id};
+    - lambda: id(voice_assistant_phase) = ${timer_finished_phase_id};
     - script.execute: draw_display
 
 time:
@@ -472,31 +468,31 @@ script:
                       then:
                         - lambda: |
                             switch(id(voice_assistant_phase)) {
-                              case ${voice_assist_listening_phase_id}:
+                              case ${listening_phase_id}:
                                 id(s3_box_lcd).show_page(listening_page);
                                 id(s3_box_lcd).update();
                                 break;
-                              case ${voice_assist_thinking_phase_id}:
+                              case ${thinking_phase_id}:
                                 id(s3_box_lcd).show_page(thinking_page);
                                 id(s3_box_lcd).update();
                                 break;
-                              case ${voice_assist_replying_phase_id}:
+                              case ${replying_phase_id}:
                                 id(s3_box_lcd).show_page(replying_page);
                                 id(s3_box_lcd).update();
                                 break;
-                              case ${voice_assist_error_phase_id}:
+                              case ${error_phase_id}:
                                 id(s3_box_lcd).show_page(error_page);
                                 id(s3_box_lcd).update();
                                 break;
-                              case ${voice_assist_muted_phase_id}:
+                              case ${muted_phase_id}:
                                 id(s3_box_lcd).show_page(muted_page);
                                 id(s3_box_lcd).update();
                                 break;
-                              case ${voice_assist_not_ready_phase_id}:
+                              case ${not_ready_phase_id}:
                                 id(s3_box_lcd).show_page(no_ha_page);
                                 id(s3_box_lcd).update();
                                 break;
-                              case ${voice_assist_timer_finished_phase_id}:
+                              case ${timer_finished_phase_id}:
                                 id(s3_box_lcd).show_page(timer_finished_page);
                                 id(s3_box_lcd).update();
                                 break;
@@ -644,9 +640,9 @@ script:
           condition:
             switch.is_off: mute
           then:
-            - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
+            - lambda: id(voice_assistant_phase) = ${idle_phase_id};
           else:
-            - lambda: id(voice_assistant_phase) = ${voice_assist_muted_phase_id};
+            - lambda: id(voice_assistant_phase) = ${muted_phase_id};
 
 switch:
   - platform: gpio
@@ -666,11 +662,11 @@ switch:
     entity_category: config
     on_turn_off:
       - microphone.unmute:
-      - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
+      - lambda: id(voice_assistant_phase) = ${idle_phase_id};
       - script.execute: draw_display
     on_turn_on:
       - microphone.mute:
-      - lambda: id(voice_assistant_phase) = ${voice_assist_muted_phase_id};
+      - lambda: id(voice_assistant_phase) = ${muted_phase_id};
       - script.execute: draw_display
   - platform: template
     id: timer_ringing
@@ -722,7 +718,7 @@ select:
             lambda: return !id(init_in_progress);
           then:
             - wait_until:
-                lambda: return id(voice_assistant_phase) == ${voice_assist_muted_phase_id} || id(voice_assistant_phase) == ${voice_assist_idle_phase_id};
+                lambda: return id(voice_assistant_phase) == ${muted_phase_id} || id(voice_assistant_phase) == ${idle_phase_id};
             - if:
                 condition:
                   lambda: return x == "In Home Assistant";
@@ -756,7 +752,7 @@ globals:
   - id: voice_assistant_phase
     type: int
     restore_value: false
-    initial_value: ${voice_assist_not_ready_phase_id}
+    initial_value: ${not_ready_phase_id}
   - id: global_first_active_timer
     type: voice_assistant::Timer
     restore_value: false
@@ -867,18 +863,10 @@ text_sensor:
         }
 
 color:
-  - id: idle_color
-    hex: ${idle_background_color}
-  - id: listening_color
-    hex: ${listening_background_color}
-  - id: thinking_color
-    hex: ${thinking_background_color}
-  - id: replying_color
-    hex: ${replying_background_color}
-  - id: loading_color
-    hex: ${loading_background_color}
-  - id: error_color
-    hex: ${error_background_color}
+  - id: dark_background
+    hex: ${dark_background}
+  - id: light_background
+    hex: ${light_background}
   - id: active_timer_color
     hex: "26ed3a"
   - id: paused_timer_color
@@ -906,59 +894,59 @@ display:
     pages:
       - id: idle_page
         lambda: |-
-          it.fill(id(idle_color));
+          it.fill(id(dark_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_idle), ImageAlign::CENTER);
           it.strftime((320 / 2), -10, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
           id(draw_timer_timeline).execute();
           id(draw_active_timer_widget).execute();
       - id: listening_page
         lambda: |-
-          it.fill(id(listening_color));
+          it.fill(id(light_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_listening), ImageAlign::CENTER);
           id(draw_timer_timeline).execute();
       - id: thinking_page
         lambda: |-
-          it.fill(id(thinking_color));
+          it.fill(id(light_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_thinking), ImageAlign::CENTER);
           it.printf((320 / 2), 25, id(font_text), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_request).state.c_str());
           id(draw_timer_timeline).execute();
       - id: replying_page
         lambda: |-
-          it.fill(id(replying_color));
+          it.fill(id(light_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_replying), ImageAlign::CENTER);
           it.printf((320 / 2), 25, id(font_text), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_request).state.c_str());
           it.printf((320 / 2), 195, id(font_text), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_response).state.c_str());
           id(draw_timer_timeline).execute();
       - id: timer_finished_page
         lambda: |-
-          it.fill(id(idle_color));
+          it.fill(id(dark_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_timer_finished), ImageAlign::CENTER);
       - id: error_page
         lambda: |-
-          it.fill(id(error_color));
+          it.fill(id(dark_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_error), ImageAlign::CENTER);
       - id: no_ha_page
         lambda: |-
-          it.fill(id(error_color));
+          it.fill(id(dark_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_error_no_ha), ImageAlign::CENTER);
       - id: no_wifi_page
         lambda: |-
-          it.fill(id(error_color));
+          it.fill(id(dark_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_error_no_wifi), ImageAlign::CENTER);
       - id: initializing_page
         lambda: |-
-          it.fill(id(loading_color));
+          it.fill(id(dark_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_loading), ImageAlign::CENTER);
       - id: muted_page
         lambda: |-
-          it.fill(id(idle_color));
+          it.fill(id(dark_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_muted), ImageAlign::CENTER);
           it.strftime((320 / 2), -10, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
           id(draw_timer_timeline).execute();
           id(draw_active_timer_widget).execute();
       - id: settings_page
         lambda: |-
-          it.fill(id(idle_color));
+          it.fill(id(dark_background));
           it.printf((320 / 2), 25, id(font_text), id(font_color), TextAlign::TOP_CENTER, "Settings");
           id(draw_timer_timeline).execute();
           id(draw_active_timer_widget).execute();
