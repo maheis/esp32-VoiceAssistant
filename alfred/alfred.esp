@@ -1,21 +1,28 @@
 substitutions:
   name: tc14
   friendly_name: tc14
-  error_no_wifi_file: http://192.168.5.45:8123/local/images/error-no-wifi.png
-  error_no_ha_file: http://192.168.5.45:8123/local/images/error-no-ha.png
-  error_file: http://192.168.5.45:8123/local/images/error.png
-  idle_file: http://192.168.5.45:8123/local/images/idle.png
-  listening_file: http://192.168.5.45:8123/local/images/listening.png
-  loading_file: http://192.168.5.45:8123/local/images/loading.png
-  muted_file: http://192.168.5.45:8123/local/images/muted.png
-  replying_file: http://192.168.5.45:8123/local/images/replying.png
-  thinking_file: http://192.168.5.45:8123/local/images/thinking.png
-  timer_finished_file: http://192.168.5.45:8123/local/images/timer_finished.png
+  ip_address_HA: 192.168.5.45
+  # !secret wifi_ssid
+  # !secret wifi_password
+  # !secret wifi_domain
 
-  wakeword_sound: http://192.168.5.45:8123/local/sounds/wakeword.mp3
-  success_sound: http://192.168.5.45:8123/local/sounds/success.mp3
-  error_sound: http://192.168.5.45:8123/local/sounds/error.mp3
-  timer_finished_sound: http://192.168.5.45:8123/local/sounds/zoot_chest_long.mp3
+  ####
+
+  error_no_wifi_file: http://${ip_address_HA}:8123/local/images/error-no-wifi.png
+  error_no_ha_file: http://${ip_address_HA}:8123/local/images/error-no-ha.png
+  error_file: http://${ip_address_HA}:8123/local/images/error.png
+  idle_file: http://${ip_address_HA}:8123/local/images/idle.png
+  listening_file: http://${ip_address_HA}:8123/local/images/listening.png
+  loading_file: http://${ip_address_HA}:8123/local/images/loading.png
+  muted_file: http://${ip_address_HA}:8123/local/images/muted.png
+  replying_file: http://${ip_address_HA}:8123/local/images/replying.png
+  thinking_file: http://${ip_address_HA}:8123/local/images/thinking.png
+  timer_finished_file: http://${ip_address_HA}:8123/local/images/timer_finished.png
+
+  wakeword_sound: http://${ip_address_HA}:8123/local/sounds/wakeword.mp3
+  success_sound: http://${ip_address_HA}:8123/local/sounds/success.mp3
+  error_sound: http://${ip_address_HA}:8123/local/sounds/error.mp3
+  timer_finished_sound: http://${ip_address_HA}:8123/local/sounds/zoot_chest_long.mp3
 
   loading_background_color: "000000"
   idle_background_color: "000000"
@@ -57,7 +64,6 @@ esphome:
             - script.execute: draw_display
 
 esp32:
-  #board: esp32-s3-devkitc-1
   board: esp32s3box
   flash_size: 16MB
   cpu_frequency: 240MHz
@@ -91,7 +97,7 @@ logger:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
-  domain: .l11
+  domain: !secret wifi_domain
   on_connect:
     - script.execute: draw_display
   on_disconnect:
