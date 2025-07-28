@@ -111,7 +111,9 @@ touchscreen:
   platform: gt911
   i2c_id: bus_a
   id: gt911_touchscreen
-  interrupt_pin: GPIO3
+  interrupt_pin: 
+    number: GPIO3
+    ignore_strapping_warning: true
 
 button:
   - platform: factory_reset
@@ -137,6 +139,7 @@ binary_sensor:
       number: GPIO0
       mode: INPUT_PULLUP
       inverted: true
+      ignore_strapping_warning: true
     internal: true
     on_press:
       - light.toggle: led
@@ -199,7 +202,9 @@ i2c:
 
 i2s_audio:
   - id: i2s_audio_bus
-    i2s_lrclk_pin: GPIO45
+    i2s_lrclk_pin: 
+      number: GPIO45
+      ignore_strapping_warning: true
     i2s_bclk_pin: GPIO17
     i2s_mclk_pin: GPIO2
 
@@ -612,7 +617,9 @@ script:
 switch:
   - platform: gpio
     name: Speaker Enable
-    pin: GPIO46
+    pin: 
+      number: GPIO46
+      ignore_strapping_warning: true
     restore_mode: RESTORE_DEFAULT_ON
     entity_category: config
     disabled_by_default: true
