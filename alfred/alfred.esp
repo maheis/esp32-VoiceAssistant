@@ -6,7 +6,7 @@ substitutions:
   # !secret wifi_password
   # !secret wifi_domain
 
-  ####
+  ###
 
   error_no_wifi_file: http://${ip_address_HA}:8123/local/images/error-no-wifi.png
   error_no_ha_file: http://${ip_address_HA}:8123/local/images/error-no-ha.png
@@ -105,6 +105,14 @@ wifi:
 
 captive_portal:
 
+###
+
+touchscreen:
+  platform: gt911
+  i2c_id: bus_a
+  id: gt911_touchscreen
+  interrupt_pin: GPIO3
+
 button:
   - platform: factory_reset
     id: factory_reset_btn
@@ -122,6 +130,7 @@ sensor:
     update_interval: 60s
 
 binary_sensor:
+  # left top button
   - platform: gpio
     pin:
       number: GPIO0
@@ -129,16 +138,14 @@ binary_sensor:
       inverted: true
     id: left_top_button
     internal: true
-    on_multi_click:
-      - timing:
-          - ON for at least 50ms
-          - OFF for at least 50ms
-        then:
-          - switch.turn_off: timer_ringing
-      - timing:
-          - ON for at least 10s
-        then:
-          - button.press: factory_reset_btn
+    on_press:
+      - light.toggle: led
+  # red circle home button
+  - id: redcircle
+    platform: gt911
+    index: 0
+    on_press:
+      - switch.turn_off: timer_ringing
 
 output:
   - platform: ledc
@@ -210,6 +217,8 @@ speaker:
     channel: left
     audio_dac: es8311_dac
     buffer_duration: 100ms
+
+###
 
 media_player:
   - platform: speaker
@@ -758,28 +767,21 @@ font:
   - file:
       type: gfonts
       family: ${font_main}
-      weight: 300
-    id: font_request
-    size: 20
-    glyphs: ${allowed_characters}
-  - file:
-      type: gfonts
-      family: ${font_main}
-      weight: 300
-    id: font_response
+      weight: 400
+    id: font_text
     size: 20
     glyphs: ${allowed_characters}
   - file:
       type: gfonts
       family: ${font_mono}
-      weight: 600
+      weight: 700
     id: font_timer
     size: 50
     glyphs: ${allowed_characters}
   - file:
       type: gfonts
       family: ${font_mono}
-      weight: 600
+      weight: 700
     id: font_time
     size: 107
     glyphs: ${allowed_characters}
@@ -859,14 +861,14 @@ display:
         lambda: |-
           it.fill(id(thinking_color));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_thinking), ImageAlign::CENTER);
-          it.printf((320 / 2), 25, id(font_request), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_request).state.c_str());
+          it.printf((320 / 2), 25, id(font_text), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_request).state.c_str());
           id(draw_timer_timeline).execute();
       - id: replying_page
         lambda: |-
           it.fill(id(replying_color));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_replying), ImageAlign::CENTER);
-          it.printf((320 / 2), 25, id(font_request), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_request).state.c_str());
-          it.printf((320 / 2), 195, id(font_response), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_response).state.c_str());
+          it.printf((320 / 2), 25, id(font_text), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_request).state.c_str());
+          it.printf((320 / 2), 195, id(font_text), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_response).state.c_str());
           id(draw_timer_timeline).execute();
       - id: timer_finished_page
         lambda: |-
