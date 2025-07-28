@@ -19,10 +19,10 @@ substitutions:
   thinking_file: http://${ip_address_HA}:8123/local/images/thinking.png
   timer_finished_file: http://${ip_address_HA}:8123/local/images/timer_finished.png
 
-  wakeword_sound: http://${ip_address_HA}:8123/local/sounds/wakeword.mp3
-  success_sound: http://${ip_address_HA}:8123/local/sounds/success.mp3
   error_sound: http://${ip_address_HA}:8123/local/sounds/error.mp3
+  success_sound: http://${ip_address_HA}:8123/local/sounds/success.mp3
   timer_finished_sound: http://${ip_address_HA}:8123/local/sounds/zoot_chest_long.mp3
+  wakeword_sound: http://${ip_address_HA}:8123/local/sounds/wakeword.mp3
 
   loading_background_color: "000000"
   idle_background_color: "000000"
@@ -111,7 +111,7 @@ touchscreen:
   platform: gt911
   i2c_id: bus_a
   id: gt911_touchscreen
-  interrupt_pin: 
+  interrupt_pin:
     number: GPIO3
     ignore_strapping_warning: true
 
@@ -157,7 +157,7 @@ binary_sensor:
       mode: INPUT_PULLUP
       inverted: true
     disabled_by_default: true
-    on_state: 
+    on_state:
       then:
         - if:
             condition:
@@ -202,7 +202,7 @@ i2c:
 
 i2s_audio:
   - id: i2s_audio_bus
-    i2s_lrclk_pin: 
+    i2s_lrclk_pin:
       number: GPIO45
       ignore_strapping_warning: true
     i2s_bclk_pin: GPIO17
@@ -255,8 +255,14 @@ media_player:
       sample_rate: 48000
       num_channels: 1 # S3 Box only has one output channel
     files:
+      - id: error_sound
+        file: ${error_sound}
+      - id: success_sound
+        file: ${success_sound}
       - id: timer_finished_sound
         file: ${timer_finished_sound}
+      - id: wakeword_sound
+        file: ${wakeword_sound}
     on_announcement:
       # Stop the wake word (mWW or VA) if the mic is capturing
       - if:
@@ -299,14 +305,6 @@ micro_wake_word:
     - hey_jarvis
     - alexa
   on_wake_word_detected:
-    - media_player.play_media: ${wakeword_sound}
-    - wait_until:
-        condition:
-          not: media_player.is_idle
-        timeout: 2sec
-    - wait_until:
-        condition: media_player.is_idle
-        timeout: 2sec
     - voice_assistant.start:
         wake_word: !lambda return wake_word;
 
@@ -341,11 +339,6 @@ voice_assistant:
         state: !lambda return x;
     - lambda: id(voice_assistant_phase) = ${voice_assist_replying_phase_id};
     - script.execute: draw_display
-    # - media_player.play_media: !lambda if(x.rfind("Sorry", 0) == 0) return "${error_sound}"; return "${success_sound}";
-    # - wait_until:
-    #     condition:
-    #       media_player.is_idle
-    #     timeout: 2sec
   on_end:
     # Wait a short amount of time to see if an announcement starts
     - wait_until:
@@ -359,6 +352,7 @@ voice_assistant:
                 media_player.is_announcing:
             - not:
                 speaker.is_playing:
+    #HIER Könnte die Lösung für das Mikrophon Problem sein!
     # Restart only mWW if enabled; streaming wake words automatically restart
     - if:
         condition:
@@ -380,10 +374,12 @@ voice_assistant:
         condition:
           lambda: return !id(init_in_progress);
         then:
-          - media_player.play_media: ${error_sound}
           - lambda: id(voice_assistant_phase) = ${voice_assist_error_phase_id};
           - script.execute: draw_display
-          - delay: 1s
+          - media_player.speaker.play_on_device_media_file:
+              media_file: error_sound
+              announcement: true
+          - delay: 3s
           - if:
               condition:
                 switch.is_off: mute
@@ -617,7 +613,7 @@ script:
 switch:
   - platform: gpio
     name: Speaker Enable
-    pin: 
+    pin:
       number: GPIO46
       ignore_strapping_warning: true
     restore_mode: RESTORE_DEFAULT_ON
