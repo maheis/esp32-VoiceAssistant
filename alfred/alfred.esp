@@ -115,7 +115,7 @@ touchscreen:
 
 button:
   - platform: factory_reset
-    id: factory_reset_btn
+    id: factory_reset_button
     internal: true
 
 sensor:
@@ -130,22 +130,40 @@ sensor:
     update_interval: 60s
 
 binary_sensor:
-  # left top button
-  - platform: gpio
+  # left_top_button
+  - id: left_top_button
+    platform: gpio
     pin:
       number: GPIO0
       mode: INPUT_PULLUP
       inverted: true
-    id: left_top_button
     internal: true
     on_press:
       - light.toggle: led
-  # red circle home button
-  - id: redcircle
+  # redcircle_button
+  - id: redcircle_button
     platform: gt911
     index: 0
     on_press:
       - switch.turn_off: timer_ringing
+  # mute_button
+  - id: mute_button
+    platform: gpio
+    pin:
+      number: GPIO1
+      mode: INPUT_PULLUP
+      inverted: true
+    disabled_by_default: true
+    on_state: 
+      then:
+        - if:
+            condition:
+              switch.is_off: mute
+            then:
+              - switch.turn_on: mute
+            else:
+              - switch.turn_off: mute
+              - button.press: factory_reset_button
 
 output:
   - platform: ledc
