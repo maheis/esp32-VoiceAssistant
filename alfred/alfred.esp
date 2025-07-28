@@ -167,7 +167,7 @@ binary_sensor:
             else:
               - switch.turn_off: mute
               - button.press: factory_reset_button
-
+       
 output:
   - platform: ledc
     pin: GPIO47
@@ -352,7 +352,6 @@ voice_assistant:
                 media_player.is_announcing:
             - not:
                 speaker.is_playing:
-    #HIER Könnte die Lösung für das Mikrophon Problem sein!
     # Restart only mWW if enabled; streaming wake words automatically restart
     - if:
         condition:
@@ -915,6 +914,6 @@ display:
         lambda: |-
           it.fill(id(idle_color));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_muted), ImageAlign::CENTER);
-          it.strftime((320 / 2), 0, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
+          it.strftime((320 / 2), -10, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
           id(draw_timer_timeline).execute();
           id(draw_active_timer_widget).execute();
