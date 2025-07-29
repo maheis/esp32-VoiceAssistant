@@ -16,6 +16,7 @@ substitutions:
   loading_file: http://${ip_address_HA}:8123/local/images/loading.png
   muted_file: http://${ip_address_HA}:8123/local/images/muted.png
   replying_file: http://${ip_address_HA}:8123/local/images/replying.png
+  settings_file: http://${ip_address_HA}:8123/local/images/settings.png
   thinking_file: http://${ip_address_HA}:8123/local/images/thinking.png
   timer_finished_file: http://${ip_address_HA}:8123/local/images/timer_finished.png
 
@@ -167,8 +168,8 @@ binary_sensor:
     platform: touchscreen
     internal: true
     x_min: 0
-    x_max: 70
-    y_min: 170
+    x_max: 50
+    y_min: 190
     y_max: 240
     on_press:
       - if:
@@ -178,15 +179,16 @@ binary_sensor:
             - lambda: id(voice_assistant_phase) = ${settings_phase_id};
             - script.execute: draw_display
           else:
-            - script.execute: set_idle_or_mute_phase
+            - lambda: id(voice_assistant_phase) = -1;
+            - script.execute: set_idle_or_mute_or_settings_phase
             - script.execute: draw_display
   # touch_next_button
   - id: touch_next_button
     platform: touchscreen
     internal: true
-    x_min: 250
+    x_min: 270
     x_max: 320
-    y_min: 170
+    y_min: 190
     y_max: 240
     on_press:
       - if:
@@ -196,54 +198,102 @@ binary_sensor:
             - lambda: id(voice_assistant_phase) = ${settings_phase_id};
             - script.execute: draw_display
           else:
-            - script.execute: set_idle_or_mute_phase
+            - lambda: id(voice_assistant_phase) = -1;
+            - script.execute: set_idle_or_mute_or_settings_phase
             - script.execute: draw_display
   # touch_vol_down
-  # - id: touch_vol_down
-  #   platform: touchscreen
-  #   internal: true
-  #   x_min: 180
-  #   x_max: 210
-  #   y_min: 90
-  #   y_max: 120
-  #   on_press:
-  #     then:
-  #       - if:
-  #           condition: 
-  #             lambda: return id(app_state) == ${APP_STATE_SETTINGS};
-  #           then:
-  #             - lambda: |-
-  #                 float volume = id(speaker_media_player).volume;
-  #                 if (volume > 0.5) {
-  #                   volume -= 0.05;
-  #                   if (volume < 0.5)
-  #                     volume = 0.5;
-  #                   id(set_volume).execute(volume);
-  #                 }
-  #             - component.update: s3_box_lcd
+  - id: touch_vol_down
+    platform: touchscreen
+    internal: true
+    x_min: 75
+    x_max: 125
+    y_min: 50
+    y_max: 100
+    on_press:
+      then:
+        - if:
+            condition:
+              lambda: return id(voice_assistant_phase) == ${settings_phase_id};
+            then:
+              - lambda: |-
+                  float volume = id(speaker_media_player).volume;
+                  if (volume > 0) {
+                    volume -= 0.05;
+                    if (volume < 0)
+                      volume = 0;
+                    id(set_volume).execute(volume);
+                  }
+              - script.execute: draw_display
   # touch_vol_up
-  # - id: touch_vol_up
-  #   platform: touchscreen
-  #   internal: true
-  #   x_min: 280
-  #   x_max: 310
-  #   y_min: 90
-  #   y_max: 120
-  #   on_press:
-  #     then:
-  #       - if:
-  #           condition: 
-  #             lambda: return id(app_state) == ${APP_STATE_SETTINGS};
-  #           then:
-  #             - lambda: |-
-  #                 float volume = id(speaker_media_player).volume;
-  #                 if (volume < 1) {
-  #                   volume += 0.05;
-  #                   if (volume > 1)
-  #                     volume = 1;
-  #                   id(set_volume).execute(volume);
-  #                 }
-  #             - component.update: s3_box_lcd
+  - id: touch_vol_up
+    platform: touchscreen
+    internal: true
+    x_min: 220
+    x_max: 270
+    y_min: 50
+    y_max: 100
+    on_press:
+      then:
+        - if:
+            condition:
+              lambda: return id(voice_assistant_phase) == ${settings_phase_id};
+            then:
+              - lambda: |-
+                  float volume = id(speaker_media_player).volume;
+                  if (volume < 1) {
+                    volume += 0.05;
+                    if (volume > 1)
+                      volume = 1;
+                    id(set_volume).execute(volume);
+                  }
+              - script.execute: draw_display
+  # touch_led_down
+  - id: touch_led_down
+    platform: touchscreen
+    internal: true
+    x_min: 75
+    x_max: 125
+    y_min: 125
+    y_max: 175
+    on_press:
+      then:
+        - if:
+            condition:
+              lambda: return id(voice_assistant_phase) == ${settings_phase_id};
+            then:
+              - lambda: |-
+                  float volume = id(speaker_media_player).volume;
+                  if (volume > 0) {
+                    volume -= 0.05;
+                    if (volume < 0)
+                      volume = 0;
+                    id(set_volume).execute(volume);
+                  }
+                  // int brightness = id(led).current_values.get_brightness() * 100;
+              - script.execute: draw_display
+  # touch_led_up
+  - id: touch_led_up
+    platform: touchscreen
+    internal: true
+    x_min: 220
+    x_max: 270
+    y_min: 125
+    y_max: 175
+    on_press:
+      then:
+        - if:
+            condition:
+              lambda: return id(voice_assistant_phase) == ${settings_phase_id};
+            then:
+              - lambda: |-
+                  float volume = id(speaker_media_player).volume;
+                  if (volume < 1) {
+                    volume += 0.05;
+                    if (volume > 1)
+                      volume = 1;
+                    id(set_volume).execute(volume);
+                  }
+              - script.execute: draw_display
 
 output:
   - platform: ledc
@@ -371,7 +421,7 @@ media_player:
               voice_assistant.is_running:
           then:
             - script.execute: start_wake_word
-            - script.execute: set_idle_or_mute_phase
+            - script.execute: set_idle_or_mute_or_settings_phase
             - script.execute: draw_display
 
 micro_wake_word:
@@ -436,7 +486,7 @@ voice_assistant:
         then:
           - lambda: id(va).set_use_wake_word(false);
           - micro_wake_word.start:
-    - script.execute: set_idle_or_mute_phase
+    - script.execute: set_idle_or_mute_or_settings_phase
     - script.execute: draw_display
     # Clear text sensors
     - text_sensor.template.publish:
@@ -467,7 +517,7 @@ voice_assistant:
   on_client_connected:
     - lambda: id(init_in_progress) = false;
     - script.execute: start_wake_word
-    - script.execute: set_idle_or_mute_phase
+    - script.execute: set_idle_or_mute_or_settings_phase
     - script.execute: draw_display
   on_client_disconnected:
     - script.execute: stop_wake_word
@@ -559,7 +609,7 @@ script:
           else:
             - display.page.show: initializing_page
             - component.update: s3_box_lcd
-
+  # Timer related scripts
   - id: fetch_first_active_timer
     then:
       - lambda: |
@@ -604,7 +654,6 @@ script:
             output = true;
           }
           id(global_is_timer) = output;
-
   - id: draw_timer_timeline
     then:
       - lambda: |
@@ -680,15 +729,24 @@ script:
           then:
             - micro_wake_word.stop:
   # Set the voice assistant phase to idle or muted, depending on if the software mute switch is activated
-  - id: set_idle_or_mute_phase
+  - id: set_idle_or_mute_or_settings_phase
     then:
       - if:
           condition:
-            switch.is_off: mute
+            lambda: return id(voice_assistant_phase) != ${settings_phase_id};
           then:
-            - lambda: id(voice_assistant_phase) = ${idle_phase_id};
-          else:
-            - lambda: id(voice_assistant_phase) = ${muted_phase_id};
+            - if:
+                condition:
+                  switch.is_off: mute
+                then:
+                  - lambda: id(voice_assistant_phase) = ${idle_phase_id};
+                else:
+                  - lambda: id(voice_assistant_phase) = ${muted_phase_id};
+  - id: set_volume
+    parameters:
+      volume: float
+    then:
+      - media_player.volume_set: !lambda 'return volume;'
 
 switch:
   - platform: gpio
@@ -853,6 +911,11 @@ image:
     resize: 320x240
     type: RGB
     transparency: alpha_channel
+  - file: ${settings_file}
+    id: image_settings
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
   - file: ${thinking_file}
     id: image_thinking
     resize: 320x240
@@ -878,6 +941,13 @@ font:
       weight: 700
     id: font_timer
     size: 70
+    glyphs: ${allowed_characters}
+  - file:
+      type: gfonts
+      family: ${font_mono}
+      weight: 700
+    id: font_settings
+    size: 50
     glyphs: ${allowed_characters}
   - file:
       type: gfonts
@@ -993,11 +1063,14 @@ display:
       - id: settings_page
         lambda: |-
           it.fill(id(dark_background));
-          it.printf((320 / 2), 25, id(font_text), id(font_color), TextAlign::TOP_CENTER, "Settings");
+          it.image((it.get_width() / 2), (it.get_height() / 2), id(image_settings), ImageAlign::CENTER);
+          it.printf((320 / 2), 0, id(font_settings), id(font_color), TextAlign::TOP_CENTER, "Settings");
           
           int volume = id(speaker_media_player).volume * 100;
-          it.printf(15, 55, id(font_text), id(font_color), TextAlign::TOP_LEFT, "Volume:");
-          it.printf(200, 55, id(font_text), id(font_color), TextAlign::TOP_LEFT, "%i%%", volume);
-
+          it.printf((320 / 2), 75, id(font_settings), id(font_color), TextAlign::TOP_CENTER, "%i%%", volume);
+          
+          int brightness = id(led).current_values.get_brightness();
+          it.printf((320 / 2), 150, id(font_settings), id(font_color), TextAlign::TOP_CENTER, "%i%%", brightness);
+          
           id(draw_timer_timeline).execute();
           id(draw_active_timer_widget).execute();
