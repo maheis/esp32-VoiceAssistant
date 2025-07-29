@@ -8,6 +8,8 @@ substitutions:
 
   ###
 
+  VERSION: '0.0.1'
+
   error_no_wifi_file: http://${ip_address_HA}:8123/local/images/error-no-wifi.png
   error_no_ha_file: http://${ip_address_HA}:8123/local/images/error-no-ha.png
   error_file: http://${ip_address_HA}:8123/local/images/error.png
@@ -52,14 +54,21 @@ esphome:
   on_boot:
     priority: 600
     then:
+      - light.turn_on: 
+          id: led
+          brightness: 75%
       - script.execute: draw_display
-      - delay: 30s
+      - delay: 15s
       - if:
           condition:
             lambda: return id(init_in_progress);
           then:
             - lambda: id(init_in_progress) = false;
             - script.execute: draw_display
+  project:
+    # name: "maheis.m.esp.alfred"
+    name: "AlmostInteractive.VoiceAssistantSensorDock"
+    version: ${VERSION}
 
 esp32:
   board: esp32s3box
@@ -262,14 +271,14 @@ binary_sensor:
               lambda: return id(voice_assistant_phase) == ${settings_phase_id};
             then:
               - lambda: |-
-                  float volume = id(speaker_media_player).volume;
-                  if (volume > 0) {
-                    volume -= 0.05;
-                    if (volume < 0)
-                      volume = 0;
-                    id(set_volume).execute(volume);
+                  float brightness = id(led).current_values.get_brightness();
+                  if (brightness > 0.1) {
+                    brightness -= 0.1;
+                    if (brightness < 0.1)
+                      brightness = 0.1;
+                    id(set_brightness).execute(brightness);
                   }
-                  // int brightness = id(led).current_values.get_brightness() * 100;
+              - delay: 111ms
               - script.execute: draw_display
   # touch_led_up
   - id: touch_led_up
@@ -286,13 +295,14 @@ binary_sensor:
               lambda: return id(voice_assistant_phase) == ${settings_phase_id};
             then:
               - lambda: |-
-                  float volume = id(speaker_media_player).volume;
-                  if (volume < 1) {
-                    volume += 0.05;
-                    if (volume > 1)
-                      volume = 1;
-                    id(set_volume).execute(volume);
+                  float brightness = id(led).current_values.get_brightness();
+                  if (brightness < 1) {
+                    brightness += 0.1;
+                    if (brightness > 1)
+                      brightness = 1;
+                    id(set_brightness).execute(brightness);
                   }
+              - delay: 111ms
               - script.execute: draw_display
 
 output:
@@ -427,7 +437,6 @@ media_player:
 micro_wake_word:
   id: mww
   models:
-    - okay_nabu
     - hey_mycroft
     - hey_jarvis
     - alexa
@@ -747,6 +756,13 @@ script:
       volume: float
     then:
       - media_player.volume_set: !lambda 'return volume;'
+  - id: set_brightness
+    parameters:
+      brightness: float
+    then:
+      - light.turn_on:
+          id: led
+          brightness: !lambda 'return brightness;'
 
 switch:
   - platform: gpio
@@ -967,7 +983,6 @@ text_sensor:
           std::string truncated = esphome::str_truncate(name.c_str(),31);
           id(text_request).state = (truncated+"...").c_str();
         }
-
   - id: text_response
     platform: template
     on_value:
@@ -1069,7 +1084,7 @@ display:
           int volume = id(speaker_media_player).volume * 100;
           it.printf((320 / 2), 75, id(font_settings), id(font_color), TextAlign::TOP_CENTER, "%i%%", volume);
           
-          int brightness = id(led).current_values.get_brightness();
+          int brightness = id(led).current_values.get_brightness() * 100;
           it.printf((320 / 2), 150, id(font_settings), id(font_color), TextAlign::TOP_CENTER, "%i%%", brightness);
           
           id(draw_timer_timeline).execute();
