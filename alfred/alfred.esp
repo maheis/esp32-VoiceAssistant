@@ -5,6 +5,8 @@ substitutions:
   # !secret wifi_ssid
   # !secret wifi_password
   # !secret wifi_domain
+  # !secret enctryption_key_vaa
+  # !secret ota_password_vaa
 
   ###
 
@@ -90,11 +92,11 @@ api:
   on_client_disconnected:
     - script.execute: draw_display
   encryption:
-    key: "9CPMm70miU46gxJ30+jzbKd8BuNPlyzgeu8iQ5svXY8="
+    key: !secret enctryption_key_vaa
 
 ota:
   - platform: esphome
-    password: "6b56da0ee2812c2b99c483af18c3965f"
+    password: !secret ota_password_vaa
     id: ota_esphome
 
 logger:
