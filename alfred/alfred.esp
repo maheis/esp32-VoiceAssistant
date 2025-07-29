@@ -127,17 +127,6 @@ button:
     id: factory_reset_button
     internal: true
 
-sensor:
-  - platform: aht10
-    i2c_id: bus_b
-    variant: AHT20
-    temperature:
-      name: "Temperature"
-      id: s3temp
-    humidity:
-      name: "Humidity"
-    update_interval: 60s
-
 binary_sensor:
   # left_top_button
   - id: left_top_button
