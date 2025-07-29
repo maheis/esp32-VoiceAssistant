@@ -68,7 +68,7 @@ esphome:
             - lambda: id(init_in_progress) = false;
             - script.execute: draw_display
   project:
-    name: "maheis.VoiceAssistantAlfred"
+    name: "maheis.esp32-VoiceAssistant"
     version: ${VERSION}
 
 esp32:
