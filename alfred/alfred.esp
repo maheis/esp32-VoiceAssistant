@@ -214,9 +214,9 @@ binary_sensor:
               lambda: return id(voice_assistant_phase) == ${settings_phase_id};
             then:
               - lambda: |-
-                  float volume = id(speaker_media_player).volume;
+                  float volume = id(speaker_media_player).volume * 100;
                   if (volume > 0) {
-                    volume -= 0.05;
+                    volume -= 5;
                     if (volume < 0)
                       volume = 0;
                     id(set_volume).execute(volume);
@@ -234,14 +234,14 @@ binary_sensor:
       then:
         - if:
             condition:
-              lambda: return id(voice_assistant_phase) == ${settings_phase_id};
+              lambda: return id(voice_assistant_phase) == ${settings_phase_id} * 100;
             then:
               - lambda: |-
                   float volume = id(speaker_media_player).volume;
-                  if (volume < 1) {
-                    volume += 0.05;
-                    if (volume > 1)
-                      volume = 1;
+                  if (volume < 100) {
+                    volume += 5;
+                    if (volume > 100)
+                      volume = 100;
                     id(set_volume).execute(volume);
                   }
               - script.execute: draw_display
@@ -260,14 +260,14 @@ binary_sensor:
               lambda: return id(voice_assistant_phase) == ${settings_phase_id};
             then:
               - lambda: |-
-                  float brightness = id(led).current_values.get_brightness();
-                  if (brightness > 0.1) {
-                    brightness -= 0.1;
-                    if (brightness < 0.1)
-                      brightness = 0.1;
+                  float brightness = id(led).current_values.get_brightness() * 100;
+                  if (brightness > 10) {
+                    brightness -= 10;
+                    if (brightness < 10)
+                      brightness = 10;
                     id(set_brightness).execute(brightness);
                   }
-              - delay: 111ms
+              - delay: 222ms
               - script.execute: draw_display
   # touch_led_up
   - id: touch_led_up
@@ -284,14 +284,14 @@ binary_sensor:
               lambda: return id(voice_assistant_phase) == ${settings_phase_id};
             then:
               - lambda: |-
-                  float brightness = id(led).current_values.get_brightness();
-                  if (brightness < 1) {
-                    brightness += 0.1;
-                    if (brightness > 1)
-                      brightness = 1;
+                  float brightness = id(led).current_values.get_brightness() * 100;
+                  if (brightness < 100) {
+                    brightness += 10;
+                    if (brightness > 100)
+                      brightness = 100;
                     id(set_brightness).execute(brightness);
                   }
-              - delay: 111ms
+              - delay: 222ms
               - script.execute: draw_display
 
 output:
@@ -744,14 +744,14 @@ script:
     parameters:
       volume: float
     then:
-      - media_player.volume_set: !lambda 'return volume;'
+      - media_player.volume_set: !lambda 'return volume / 100.0;'
   - id: set_brightness
     parameters:
       brightness: float
     then:
       - light.turn_on:
           id: led
-          brightness: !lambda 'return brightness;'
+          brightness: !lambda 'return brightness / 100.0;'
 
 switch:
   - platform: gpio
