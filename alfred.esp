@@ -1,6 +1,9 @@
 substitutions:
+  # This is the name of the device, it will be used as Network Name
   name: tc14
+  # This is the friendly name of the device, it will be used in Home Assistant
   friendly_name: tc14
+  #Change this to your Home Assistant IP address
   ip_address_HA: 192.168.5.45
   # !secret wifi_ssid
   # !secret wifi_password
