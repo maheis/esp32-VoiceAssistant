@@ -377,6 +377,134 @@ time:
     
 ###
 
+globals:
+  - id: init_in_progress
+    type: bool
+    restore_value: false
+    initial_value: "true"
+  - id: voice_assistant_phase
+    type: int
+    restore_value: false
+    initial_value: ${phase_not_ready}
+  - id: day_night_mode
+    type: int
+    restore_value: false
+    initial_value: "0"  # 0 init, 1 day, 2 night
+  # Global variables for the timers
+  - id: global_first_active_timer
+    type: voice_assistant::Timer
+    restore_value: false
+  - id: global_is_timer_active
+    type: bool
+    restore_value: false
+  - id: global_first_timer
+    type: voice_assistant::Timer
+    restore_value: false
+  - id: global_is_timer
+    type: bool
+    restore_value: false
+
+image:
+  - file: ${image_error}
+    id: image_error
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+  - file: ${image_error_no_wifi}
+    id: image_error_no_wifi
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+  - file: ${image_error_no_ha}
+    id: image_error_no_ha
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+  - file: ${image_idle}
+    id: image_idle
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+  - file: ${image_listening}
+    id: image_listening
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+  - file: ${image_loading}
+    id: image_loading
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+  - file: ${image_muted}
+    id: image_muted
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+  - file: ${image_replying}
+    id: image_replying
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+  - file: ${image_settings}
+    id: image_settings
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+  - file: ${image_thinking}
+    id: image_thinking
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+  - file: ${image_timer_finished}
+    id: image_timer_finished
+    resize: 320x240
+    type: RGB
+    transparency: alpha_channel
+
+font:
+  - file:
+      type: gfonts
+      family: ${font_mono}
+      weight: 700
+    id: font_time
+    size: 127
+    glyphs: ${font_allowed_characters}
+  - file:
+      type: gfonts
+      family: ${font_mono}
+      weight: 700
+    id: font_timer
+    size: 70
+    glyphs: ${font_allowed_characters}
+  - file:
+      type: gfonts
+      family: ${font_mono}
+      weight: 700
+    id: font_settings
+    size: 50
+    glyphs: ${font_allowed_characters}
+  - file:
+      type: gfonts
+      family: ${font_main}
+      weight: 300
+    id: font_text
+    size: 20
+    glyphs: ${font_allowed_characters}
+
+color:
+  - id: background_dark
+    hex: ${background_dark}
+  - id: background_light
+    hex: ${background_light}
+  - id: active_timer_color
+    hex: "26ed3a"
+  - id: paused_timer_color
+    hex: "3b89e3"
+  - id: font_color
+    hex: ${font_color}
+
+###
+
 media_player:
   - id: speaker_media_player
     platform: speaker
@@ -448,13 +576,13 @@ voice_assistant:
   auto_gain: 31dBFS
   volume_multiplier: 2.0
   on_listening:
-    - lambda: id(voice_assistant_phase) = ${phase_listening};
     - text_sensor.template.publish:
         id: text_request
         state: "..."
     - text_sensor.template.publish:
         id: text_response
         state: "..."
+    - lambda: id(voice_assistant_phase) = ${phase_listening};
     - script.execute: draw_display
   on_stt_vad_end:
     - lambda: id(voice_assistant_phase) = ${phase_thinking};
@@ -475,7 +603,7 @@ voice_assistant:
     - wait_until:
         condition:
           - media_player.is_announcing:
-        timeout: 0.5s
+        timeout: 500ms
     # Announcement is finished and the I2S bus is free
     - wait_until:
         - and:
@@ -509,14 +637,12 @@ voice_assistant:
           - media_player.speaker.play_on_device_media_file:
               media_file: sound_error
               announcement: true
-          - delay: 3s
-          - if:
+          - wait_until:
               condition:
-                switch.is_off: mute
-              then:
-                - lambda: id(voice_assistant_phase) = ${phase_idle};
-              else:
-                - lambda: id(voice_assistant_phase) = ${phase_muted};
+                - not:
+                    media_player.is_announcing:
+              timeout: 5s
+          - script.execute: set_idle_or_mute_or_settings_phase
           - script.execute: draw_display
   on_client_connected:
     - lambda: id(init_in_progress) = false;
@@ -545,7 +671,6 @@ voice_assistant:
 interval:
   - interval: 60s
     then:
-      - script.execute: draw_display
       - lambda: |-
           auto hour = id(ha_time).now().hour;
           int brightness;
@@ -569,6 +694,7 @@ interval:
               id(set_volume).execute(volume);
             }
           }
+      - script.execute: draw_display
 
 script:
   - id: draw_display
@@ -765,6 +891,7 @@ script:
                   - lambda: id(voice_assistant_phase) = ${phase_idle};
                 else:
                   - lambda: id(voice_assistant_phase) = ${phase_muted};
+  # Set the volume and brightness of the device
   - id: set_volume
     parameters:
       volume: float
@@ -779,7 +906,8 @@ script:
           brightness: !lambda 'return brightness / 100.0;'
 
 switch:
-  - platform: gpio
+  - id: speaker_enable
+    platform: gpio
     name: Speaker Enable
     pin:
       number: GPIO46
@@ -787,9 +915,9 @@ switch:
     restore_mode: RESTORE_DEFAULT_ON
     entity_category: config
     disabled_by_default: true
-  - platform: template
+  - id: mute
+    platform: template
     name: Mute
-    id: mute
     icon: "mdi:microphone-off"
     optimistic: true
     restore_mode: RESTORE_DEFAULT_OFF
@@ -802,8 +930,8 @@ switch:
       - microphone.mute:
       - lambda: id(voice_assistant_phase) = ${phase_muted};
       - script.execute: draw_display
-  - platform: template
-    id: timer_ringing
+  - id: timer_ringing
+    platform: template
     optimistic: true
     internal: true
     restore_mode: ALWAYS_OFF
@@ -835,10 +963,10 @@ switch:
       - switch.turn_off: timer_ringing
 
 select:
-  - platform: template
+  - id: wake_word_engine_location
+    platform: template
     entity_category: config
     name: Wake word engine location
-    id: wake_word_engine_location
     icon: "mdi:account-voice"
     optimistic: true
     restore_value: true
@@ -878,120 +1006,6 @@ select:
                       then:
                         - micro_wake_word.start
 
-globals:
-  - id: init_in_progress
-    type: bool
-    restore_value: false
-    initial_value: "true"
-  - id: voice_assistant_phase
-    type: int
-    restore_value: false
-    initial_value: ${phase_not_ready}
-  - id: day_night_mode
-    type: int
-    restore_value: false
-    initial_value: "0"  # 0 init, 1 day, 2 night
-  # Global variables for the timers
-  - id: global_first_active_timer
-    type: voice_assistant::Timer
-    restore_value: false
-  - id: global_is_timer_active
-    type: bool
-    restore_value: false
-  - id: global_first_timer
-    type: voice_assistant::Timer
-    restore_value: false
-  - id: global_is_timer
-    type: bool
-    restore_value: false
-
-image:
-  - file: ${image_error}
-    id: image_error
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${image_error_no_wifi}
-    id: image_error_no_wifi
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${image_error_no_ha}
-    id: image_error_no_ha
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${image_idle}
-    id: image_idle
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${image_listening}
-    id: image_listening
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${image_loading}
-    id: image_loading
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${image_muted}
-    id: image_muted
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${image_replying}
-    id: image_replying
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${image_settings}
-    id: image_settings
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${image_thinking}
-    id: image_thinking
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-  - file: ${image_timer_finished}
-    id: image_timer_finished
-    resize: 320x240
-    type: RGB
-    transparency: alpha_channel
-
-font:
-  - file:
-      type: gfonts
-      family: ${font_mono}
-      weight: 700
-    id: font_time
-    size: 127
-    glyphs: ${font_allowed_characters}
-  - file:
-      type: gfonts
-      family: ${font_mono}
-      weight: 700
-    id: font_timer
-    size: 70
-    glyphs: ${font_allowed_characters}
-  - file:
-      type: gfonts
-      family: ${font_mono}
-      weight: 700
-    id: font_settings
-    size: 50
-    glyphs: ${font_allowed_characters}
-  - file:
-      type: gfonts
-      family: ${font_main}
-      weight: 300
-    id: font_text
-    size: 20
-    glyphs: ${font_allowed_characters}
-
 text_sensor:
   - id: text_request
     platform: template
@@ -1012,18 +1026,6 @@ text_sensor:
           id(text_response).state = (truncated+"...").c_str();
         }
 
-color:
-  - id: background_dark
-    hex: ${background_dark}
-  - id: background_light
-    hex: ${background_light}
-  - id: active_timer_color
-    hex: "26ed3a"
-  - id: paused_timer_color
-    hex: "3b89e3"
-  - id: font_color
-    hex: ${font_color}
-
 spi:
   # Component display.ili9xxx requires component spi
   - id: spi_bus
@@ -1031,8 +1033,8 @@ spi:
     mosi_pin: 6
 
 display:
-  - platform: ili9xxx
-    id: s3_box_lcd
+  - id: s3_box_lcd
+    platform: ili9xxx
     model: S3BOX
     invert_colors: false
     data_rate: 40MHz
