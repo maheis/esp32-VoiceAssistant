@@ -24,17 +24,17 @@ substitutions:
 
   VERSION: '0.0.1'
 
-  error_no_wifi_file: http://${ip_address_HA}:8123/local/images/error-no-wifi.png
-  error_no_ha_file: http://${ip_address_HA}:8123/local/images/error-no-ha.png
-  error_file: http://${ip_address_HA}:8123/local/images/error.png
-  idle_file: http://${ip_address_HA}:8123/local/images/idle.png
-  listening_file: http://${ip_address_HA}:8123/local/images/listening.png
-  loading_file: http://${ip_address_HA}:8123/local/images/loading.png
-  muted_file: http://${ip_address_HA}:8123/local/images/muted.png
-  replying_file: http://${ip_address_HA}:8123/local/images/replying.png
-  settings_file: http://${ip_address_HA}:8123/local/images/settings.png
-  thinking_file: http://${ip_address_HA}:8123/local/images/thinking.png
-  timer_finished_file: http://${ip_address_HA}:8123/local/images/timer_finished.png
+  image_error_no_wifi: http://${ip_address_HA}:8123/local/images/error-no-wifi.png
+  image_error_no_ha: http://${ip_address_HA}:8123/local/images/error-no-ha.png
+  image_error: http://${ip_address_HA}:8123/local/images/error.png
+  image_idle: http://${ip_address_HA}:8123/local/images/idle.png
+  image_listening: http://${ip_address_HA}:8123/local/images/listening.png
+  image_loading: http://${ip_address_HA}:8123/local/images/loading.png
+  image_muted: http://${ip_address_HA}:8123/local/images/muted.png
+  image_replying: http://${ip_address_HA}:8123/local/images/replying.png
+  image_settings: http://${ip_address_HA}:8123/local/images/settings.png
+  image_thinking: http://${ip_address_HA}:8123/local/images/thinking.png
+  image_timer_finished: http://${ip_address_HA}:8123/local/images/timer_finished.png
 
   error_sound: http://${ip_address_HA}:8123/local/sounds/error.mp3
   success_sound: http://${ip_address_HA}:8123/local/sounds/success.mp3
@@ -939,57 +939,57 @@ globals:
     restore_value: false
 
 image:
-  - file: ${error_file}
+  - file: ${image_error}
     id: image_error
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${error_no_wifi_file}
+  - file: ${image_error_no_wifi}
     id: image_error_no_wifi
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${error_no_ha_file}
+  - file: ${image_error_no_ha}
     id: image_error_no_ha
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${idle_file}
+  - file: ${image_idle}
     id: image_idle
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${listening_file}
+  - file: ${image_listening}
     id: image_listening
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${loading_file}
+  - file: ${image_loading}
     id: image_loading
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${muted_file}
+  - file: ${image_muted}
     id: image_muted
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${replying_file}
+  - file: ${image_replying}
     id: image_replying
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${settings_file}
+  - file: ${image_settings}
     id: image_settings
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${thinking_file}
+  - file: ${image_thinking}
     id: image_thinking
     resize: 320x240
     type: RGB
     transparency: alpha_channel
-  - file: ${timer_finished_file}
+  - file: ${image_timer_finished}
     id: image_timer_finished
     resize: 320x240
     type: RGB
