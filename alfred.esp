@@ -136,16 +136,6 @@ button:
     id: factory_reset_button
     internal: true
 
-sensor:
-  - platform: template
-    id: sunrise_time
-    update_interval: 60s
-    internal: true
-  - platform: template
-    id: sunset_time
-    update_interval: 60s
-    internal: true
-
 binary_sensor:
   # left_top_button
   - id: left_top_button
