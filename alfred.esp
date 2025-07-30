@@ -69,9 +69,6 @@ esphome:
   on_boot:
     priority: 600
     then:
-      - light.turn_on: 
-          id: led
-          brightness: 70%
       - script.execute: draw_display
       - delay: 15s
       - if:
@@ -123,8 +120,6 @@ wifi:
     - script.execute: draw_display
   on_disconnect:
     - script.execute: draw_display
-
-captive_portal:
 
 ###
 
