@@ -124,20 +124,19 @@ wifi:
 ###
 
 touchscreen:
-  platform: gt911
-  i2c_id: bus_a
-  id: gt911_touchscreen
-  interrupt_pin:
-    number: GPIO3
-    ignore_strapping_warning: true
+  - id: gt911_touchscreen
+    platform: gt911
+    i2c_id: i2c_bus_a
+    interrupt_pin:
+      number: GPIO3
+      ignore_strapping_warning: true
 
 button:
-  - platform: factory_reset
-    id: factory_reset_button
+  - id: factory_reset_button
+    platform: factory_reset
     internal: true
 
 binary_sensor:
-  # left_top_button
   - id: left_top_button
     platform: gpio
     pin:
@@ -148,7 +147,6 @@ binary_sensor:
     internal: true
     on_press:
       - light.toggle: led
-  # redcircle_button
   - id: redcircle_button
     platform: gt911
     index: 0
@@ -162,7 +160,6 @@ binary_sensor:
             - script.execute: draw_display
           else:
             - switch.turn_off: timer_ringing
-  # mute_button
   - id: mute_button
     platform: gpio
     pin:
@@ -178,7 +175,6 @@ binary_sensor:
           else:
             - switch.turn_off: mute
             - button.press: factory_reset_button
-  # touch_prev_button
   - id: touch_prev_button
     platform: touchscreen
     internal: true
@@ -197,7 +193,6 @@ binary_sensor:
             - lambda: id(voice_assistant_phase) = -1;
             - script.execute: set_idle_or_mute_or_settings_phase
             - script.execute: draw_display
-  # touch_next_button
   - id: touch_next_button
     platform: touchscreen
     internal: true
@@ -216,7 +211,6 @@ binary_sensor:
             - lambda: id(voice_assistant_phase) = -1;
             - script.execute: set_idle_or_mute_or_settings_phase
             - script.execute: draw_display
-  # touch_vol_down
   - id: touch_vol_down
     platform: touchscreen
     internal: true
@@ -240,7 +234,6 @@ binary_sensor:
                   }
               - delay: 55ms
               - script.execute: draw_display
-  # touch_vol_up
   - id: touch_vol_up
     platform: touchscreen
     internal: true
@@ -264,7 +257,6 @@ binary_sensor:
                   }
               - delay: 55ms
               - script.execute: draw_display
-  # touch_led_down
   - id: touch_led_down
     platform: touchscreen
     internal: true
@@ -288,7 +280,6 @@ binary_sensor:
                   }
               - delay: 333ms
               - script.execute: draw_display
-  # touch_led_up
   - id: touch_led_up
     platform: touchscreen
     internal: true
@@ -314,14 +305,14 @@ binary_sensor:
               - script.execute: draw_display
 
 output:
-  - platform: ledc
+  - id: backlight_output
+    platform: ledc
     pin: GPIO47
-    id: backlight_output
 
 light:
-  - platform: monochromatic
-    id: led
-    name: Screen
+  - id: led
+    platform: monochromatic
+    name: "Screen"
     icon: "mdi:television"
     entity_category: config
     output: backlight_output
@@ -329,21 +320,13 @@ light:
     default_transition_length: 250ms
 
 i2c:
-  - id: bus_a
+  - id: i2c_bus_a
     scl: GPIO18
     sda: GPIO8
     scan: false
     sda_pullup_enabled: true
     scl_pullup_enabled: true
     frequency: 100kHz
-
-  - id: bus_b
-    sda: GPIO41
-    scl: GPIO40
-    scan: false
-    sda_pullup_enabled: true
-    scl_pullup_enabled: true
-    frequency: 50kHz
 
 i2s_audio:
   - id: i2s_audio_bus
@@ -354,30 +337,30 @@ i2s_audio:
     i2s_mclk_pin: GPIO2
 
 audio_adc:
-  - platform: es7210
-    id: es7210_adc
-    i2c_id: bus_a
+  - id: es7210_adc
+    platform: es7210
+    i2c_id: i2c_bus_a
     bits_per_sample: 16bit
     sample_rate: 16000
 
 audio_dac:
-  - platform: es8311
-    id: es8311_dac
-    i2c_id: bus_a
+  - id: es8311_dac
+    platform: es8311
+    i2c_id: i2c_bus_a
     bits_per_sample: 16bit
     sample_rate: 48000
 
 microphone:
-  - platform: i2s_audio
-    id: box_mic
+  - id: box_mic
+    platform: i2s_audio
     sample_rate: 16000
     i2s_din_pin: GPIO16
     bits_per_sample: 16bit
     adc_type: external
 
 speaker:
-  - platform: i2s_audio
-    id: box_speaker
+  - id: box_speaker
+    platform: i2s_audio
     i2s_dout_pin: GPIO15
     dac_type: external
     sample_rate: 48000
@@ -389,8 +372,8 @@ speaker:
 ###
 
 time:
-  - platform: homeassistant
-    id: ha_time
+  - id: ha_time
+    platform: homeassistant
     
 ###
 
