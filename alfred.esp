@@ -36,24 +36,24 @@ substitutions:
   image_thinking: http://${ip_address_HA}:8123/local/images/thinking.png
   image_timer_finished: http://${ip_address_HA}:8123/local/images/timer_finished.png
 
-  error_sound: http://${ip_address_HA}:8123/local/sounds/error.mp3
-  success_sound: http://${ip_address_HA}:8123/local/sounds/success.mp3
-  timer_finished_sound: http://${ip_address_HA}:8123/local/sounds/zoot_chest_long.mp3
-  wakeword_sound: http://${ip_address_HA}:8123/local/sounds/wakeword.mp3
+  sound_error: http://${ip_address_HA}:8123/local/sounds/error.mp3
+  sound_success: http://${ip_address_HA}:8123/local/sounds/success.mp3
+  sound_timer_finished: http://${ip_address_HA}:8123/local/sounds/zoot_chest_long.mp3
+  sound_wakeword: http://${ip_address_HA}:8123/local/sounds/wakeword.mp3
 
-  light_background: "F9F9F9"
-  dark_background: "212121"
+  background_light: "F9F9F9"
+  background_dark: "212121"
   font_color: "FFB74D"
 
-  idle_phase_id: "1"
-  listening_phase_id: "2"
-  thinking_phase_id: "3"
-  replying_phase_id: "4"
-  not_ready_phase_id: "10"
-  error_phase_id: "11"
-  muted_phase_id: "12"
-  timer_finished_phase_id: "20"
-  settings_phase_id: "99"
+  phase_idle: "1"
+  phase_listening: "2"
+  phase_thinking: "3"
+  phase_replying: "4"
+  phase_not_ready: "10"
+  phase_error: "11"
+  phase_muted: "12"
+  phase_timer_finished: "20"
+  phase_settings: "99"
 
   allowed_characters: " !#$%&\"'()*+,-.\\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]_abcdefghijklmnopqrstuvwxyz{|}°ÄÖÜäöüß"
 
@@ -169,7 +169,7 @@ binary_sensor:
     on_press:
       - if:
           condition:
-            lambda: return id(voice_assistant_phase) == ${settings_phase_id};
+            lambda: return id(voice_assistant_phase) == ${phase_settings};
           then:
             - lambda: id(voice_assistant_phase) = -1;
             - script.execute: set_idle_or_mute_or_settings_phase
@@ -203,9 +203,9 @@ binary_sensor:
     on_press:
       - if:
           condition: 
-            lambda: return id(voice_assistant_phase) != ${settings_phase_id};
+            lambda: return id(voice_assistant_phase) != ${phase_settings};
           then:
-            - lambda: id(voice_assistant_phase) = ${settings_phase_id};
+            - lambda: id(voice_assistant_phase) = ${phase_settings};
             - script.execute: draw_display
           else:
             - lambda: id(voice_assistant_phase) = -1;
@@ -222,9 +222,9 @@ binary_sensor:
     on_press:
       - if:
           condition: 
-            lambda: return id(voice_assistant_phase) != ${settings_phase_id};
+            lambda: return id(voice_assistant_phase) != ${phase_settings};
           then:
-            - lambda: id(voice_assistant_phase) = ${settings_phase_id};
+            - lambda: id(voice_assistant_phase) = ${phase_settings};
             - script.execute: draw_display
           else:
             - lambda: id(voice_assistant_phase) = -1;
@@ -242,7 +242,7 @@ binary_sensor:
       then:
         - if:
             condition:
-              lambda: return id(voice_assistant_phase) == ${settings_phase_id};
+              lambda: return id(voice_assistant_phase) == ${phase_settings};
             then:
               - lambda: |-
                   int volume = round(id(speaker_media_player).volume * 100.0);
@@ -266,7 +266,7 @@ binary_sensor:
       then:
         - if:
             condition:
-              lambda: return id(voice_assistant_phase) == ${settings_phase_id};
+              lambda: return id(voice_assistant_phase) == ${phase_settings};
             then:
               - lambda: |-
                   int volume = round(id(speaker_media_player).volume * 100.0);
@@ -290,7 +290,7 @@ binary_sensor:
       then:
         - if:
             condition:
-              lambda: return id(voice_assistant_phase) == ${settings_phase_id};
+              lambda: return id(voice_assistant_phase) == ${phase_settings};
             then:
               - lambda: |-
                   int brightness = round(id(led).current_values.get_brightness() * 100.0);
@@ -314,7 +314,7 @@ binary_sensor:
       then:
         - if:
             condition:
-              lambda: return id(voice_assistant_phase) == ${settings_phase_id};
+              lambda: return id(voice_assistant_phase) == ${phase_settings};
             then:
               - lambda: |-
                   int brightness = round(id(led).current_values.get_brightness() * 100.0);
@@ -420,14 +420,14 @@ media_player:
       sample_rate: 48000
       num_channels: 1 # S3 Box only has one output channel
     files:
-      - id: error_sound
-        file: ${error_sound}
-      - id: success_sound
-        file: ${success_sound}
-      - id: timer_finished_sound
-        file: ${timer_finished_sound}
-      - id: wakeword_sound
-        file: ${wakeword_sound}
+      - id: sound_error
+        file: ${sound_error}
+      - id: sound_success
+        file: ${sound_success}
+      - id: sound_timer_finished
+        file: ${sound_timer_finished}
+      - id: sound_wakeword
+        file: ${sound_wakeword}
     on_announcement:
       # Stop the wake word (mWW or VA) if the mic is capturing
       - if:
@@ -449,7 +449,7 @@ media_player:
             not:
               voice_assistant.is_running:
           then:
-            - lambda: id(voice_assistant_phase) = ${muted_phase_id};
+            - lambda: id(voice_assistant_phase) = ${phase_muted};
             - script.execute: draw_display
     on_idle:
       # Since VA isn't running, this is the end of user-intiated media playback. Restart the wake word.
@@ -481,7 +481,7 @@ voice_assistant:
   auto_gain: 31dBFS
   volume_multiplier: 2.0
   on_listening:
-    - lambda: id(voice_assistant_phase) = ${listening_phase_id};
+    - lambda: id(voice_assistant_phase) = ${phase_listening};
     - text_sensor.template.publish:
         id: text_request
         state: "..."
@@ -490,7 +490,7 @@ voice_assistant:
         state: "..."
     - script.execute: draw_display
   on_stt_vad_end:
-    - lambda: id(voice_assistant_phase) = ${thinking_phase_id};
+    - lambda: id(voice_assistant_phase) = ${phase_thinking};
     - script.execute: draw_display
   on_stt_end:
     - text_sensor.template.publish:
@@ -501,7 +501,7 @@ voice_assistant:
     - text_sensor.template.publish:
         id: text_response
         state: !lambda return x;
-    - lambda: id(voice_assistant_phase) = ${replying_phase_id};
+    - lambda: id(voice_assistant_phase) = ${phase_replying};
     - script.execute: draw_display
   on_end:
     # Wait a short amount of time to see if an announcement starts
@@ -537,19 +537,19 @@ voice_assistant:
         condition:
           lambda: return !id(init_in_progress);
         then:
-          - lambda: id(voice_assistant_phase) = ${error_phase_id};
+          - lambda: id(voice_assistant_phase) = ${phase_error};
           - script.execute: draw_display
           - media_player.speaker.play_on_device_media_file:
-              media_file: error_sound
+              media_file: sound_error
               announcement: true
           - delay: 3s
           - if:
               condition:
                 switch.is_off: mute
               then:
-                - lambda: id(voice_assistant_phase) = ${idle_phase_id};
+                - lambda: id(voice_assistant_phase) = ${phase_idle};
               else:
-                - lambda: id(voice_assistant_phase) = ${muted_phase_id};
+                - lambda: id(voice_assistant_phase) = ${phase_muted};
           - script.execute: draw_display
   on_client_connected:
     - lambda: id(init_in_progress) = false;
@@ -558,7 +558,7 @@ voice_assistant:
     - script.execute: draw_display
   on_client_disconnected:
     - script.execute: stop_wake_word
-    - lambda: id(voice_assistant_phase) = ${not_ready_phase_id};
+    - lambda: id(voice_assistant_phase) = ${phase_not_ready};
     - script.execute: draw_display
   on_timer_started:
     - script.execute: draw_display
@@ -572,7 +572,7 @@ voice_assistant:
     - switch.turn_on: timer_ringing
     - wait_until:
         media_player.is_announcing:
-    - lambda: id(voice_assistant_phase) = ${timer_finished_phase_id};
+    - lambda: id(voice_assistant_phase) = ${phase_timer_finished};
     - script.execute: draw_display
 
 interval:
@@ -620,35 +620,35 @@ script:
                       then:
                         - lambda: |
                             switch(id(voice_assistant_phase)) {
-                              case ${listening_phase_id}:
+                              case ${phase_listening}:
                                 id(s3_box_lcd).show_page(listening_page);
                                 id(s3_box_lcd).update();
                                 break;
-                              case ${thinking_phase_id}:
+                              case ${phase_thinking}:
                                 id(s3_box_lcd).show_page(thinking_page);
                                 id(s3_box_lcd).update();
                                 break;
-                              case ${replying_phase_id}:
+                              case ${phase_replying}:
                                 id(s3_box_lcd).show_page(replying_page);
                                 id(s3_box_lcd).update();
                                 break;
-                              case ${error_phase_id}:
+                              case ${phase_error}:
                                 id(s3_box_lcd).show_page(error_page);
                                 id(s3_box_lcd).update();
                                 break;
-                              case ${muted_phase_id}:
+                              case ${phase_muted}:
                                 id(s3_box_lcd).show_page(muted_page);
                                 id(s3_box_lcd).update();
                                 break;
-                              case ${not_ready_phase_id}:
+                              case ${phase_not_ready}:
                                 id(s3_box_lcd).show_page(no_ha_page);
                                 id(s3_box_lcd).update();
                                 break;
-                              case ${timer_finished_phase_id}:
+                              case ${phase_timer_finished}:
                                 id(s3_box_lcd).show_page(timer_finished_page);
                                 id(s3_box_lcd).update();
                                 break;
-                              case ${settings_phase_id}:
+                              case ${phase_settings}:
                                 id(s3_box_lcd).show_page(settings_page);
                                 id(s3_box_lcd).update();
                                 break;
@@ -789,15 +789,15 @@ script:
     then:
       - if:
           condition:
-            lambda: return id(voice_assistant_phase) != ${settings_phase_id};
+            lambda: return id(voice_assistant_phase) != ${phase_settings};
           then:
             - if:
                 condition:
                   switch.is_off: mute
                 then:
-                  - lambda: id(voice_assistant_phase) = ${idle_phase_id};
+                  - lambda: id(voice_assistant_phase) = ${phase_idle};
                 else:
-                  - lambda: id(voice_assistant_phase) = ${muted_phase_id};
+                  - lambda: id(voice_assistant_phase) = ${phase_muted};
   - id: set_volume
     parameters:
       volume: float
@@ -829,11 +829,11 @@ switch:
     entity_category: config
     on_turn_off:
       - microphone.unmute:
-      - lambda: id(voice_assistant_phase) = ${idle_phase_id};
+      - lambda: id(voice_assistant_phase) = ${phase_idle};
       - script.execute: draw_display
     on_turn_on:
       - microphone.mute:
-      - lambda: id(voice_assistant_phase) = ${muted_phase_id};
+      - lambda: id(voice_assistant_phase) = ${phase_muted};
       - script.execute: draw_display
   - platform: template
     id: timer_ringing
@@ -862,7 +862,7 @@ switch:
             .perform();
           id(speaker_media_player)->set_playlist_delay_ms(speaker::AudioPipelineType::ANNOUNCEMENT, 1000);
       - media_player.speaker.play_on_device_media_file:
-          media_file: timer_finished_sound
+          media_file: sound_timer_finished
           announcement: true
       - delay: 35s
       - switch.turn_off: timer_ringing
@@ -885,7 +885,7 @@ select:
             lambda: return !id(init_in_progress);
           then:
             - wait_until:
-                lambda: return id(voice_assistant_phase) == ${muted_phase_id} || id(voice_assistant_phase) == ${idle_phase_id};
+                lambda: return id(voice_assistant_phase) == ${phase_muted} || id(voice_assistant_phase) == ${phase_idle};
             - if:
                 condition:
                   lambda: return x == "In Home Assistant";
@@ -919,7 +919,7 @@ globals:
   - id: voice_assistant_phase
     type: int
     restore_value: false
-    initial_value: ${not_ready_phase_id}
+    initial_value: ${phase_not_ready}
   - id: day_night_mode
     type: int
     restore_value: false
@@ -1046,10 +1046,10 @@ text_sensor:
         }
 
 color:
-  - id: dark_background
-    hex: ${dark_background}
-  - id: light_background
-    hex: ${light_background}
+  - id: background_dark
+    hex: ${background_dark}
+  - id: background_light
+    hex: ${background_light}
   - id: active_timer_color
     hex: "26ed3a"
   - id: paused_timer_color
@@ -1078,7 +1078,7 @@ display:
     pages:
       - id: idle_page
         lambda: |-
-          it.fill(id(dark_background));
+          it.fill(id(background_dark));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_idle), ImageAlign::CENTER);
 
           it.strftime((320 / 2), -10, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
@@ -1087,19 +1087,19 @@ display:
           id(draw_timer_timeline).execute();
       - id: listening_page
         lambda: |-
-          it.fill(id(light_background));
+          it.fill(id(background_light));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_listening), ImageAlign::CENTER);
 
           id(draw_timer_timeline).execute();
       - id: thinking_page
         lambda: |-
-          it.fill(id(light_background));
+          it.fill(id(background_light));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_thinking), ImageAlign::CENTER);
 
           id(draw_timer_timeline).execute();
       - id: replying_page
         lambda: |-
-          it.fill(id(light_background));
+          it.fill(id(background_light));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_replying), ImageAlign::CENTER);
 
           it.printf((320 / 2), 25, id(font_text), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_request).state.c_str());
@@ -1108,29 +1108,29 @@ display:
           id(draw_timer_timeline).execute();
       - id: timer_finished_page
         lambda: |-
-          it.fill(id(dark_background));
+          it.fill(id(background_dark));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_timer_finished), ImageAlign::CENTER);
       - id: error_page
         lambda: |-
-          it.fill(id(dark_background));
+          it.fill(id(background_dark));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_error), ImageAlign::CENTER);
 
           id(draw_timer_timeline).execute();
       - id: no_ha_page
         lambda: |-
-          it.fill(id(dark_background));
+          it.fill(id(background_dark));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_error_no_ha), ImageAlign::CENTER);
       - id: no_wifi_page
         lambda: |-
-          it.fill(id(dark_background));
+          it.fill(id(background_dark));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_error_no_wifi), ImageAlign::CENTER);
       - id: initializing_page
         lambda: |-
-          it.fill(id(dark_background));
+          it.fill(id(background_dark));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_loading), ImageAlign::CENTER);
       - id: muted_page
         lambda: |-
-          it.fill(id(dark_background));
+          it.fill(id(background_dark));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_muted), ImageAlign::CENTER);
 
           it.strftime((320 / 2), -10, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
@@ -1139,7 +1139,7 @@ display:
           id(draw_timer_timeline).execute();
       - id: settings_page
         lambda: |-
-          it.fill(id(dark_background));
+          it.fill(id(background_dark));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_settings), ImageAlign::CENTER);
           
           it.printf((320 / 2), 0, id(font_settings), id(font_color), TextAlign::TOP_CENTER, "Settings");
