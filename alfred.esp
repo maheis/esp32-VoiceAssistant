@@ -340,7 +340,7 @@ i2c:
     sda_pullup_enabled: true
     scl_pullup_enabled: true
     frequency: 100kHz
-  
+
   - id: bus_b
     sda: GPIO41
     scl: GPIO40
@@ -389,6 +389,12 @@ speaker:
     channel: left
     audio_dac: es8311_dac
     buffer_duration: 100ms
+
+###
+
+time:
+  - platform: homeassistant
+    id: ha_time
 
 ###
 
@@ -559,30 +565,33 @@ voice_assistant:
     - lambda: id(voice_assistant_phase) = ${timer_finished_phase_id};
     - script.execute: draw_display
 
-time:
-  - platform: homeassistant
-    id: ha_time
-
 interval:
   - interval: 60s
     then:
       - script.execute: draw_display
       - lambda: |-
           auto hour = id(ha_time).now().hour;
-          int brightness = 70; // Default brightness
-          int volume = 70; // Default volume
+          int brightness;
+          int volume;
           if (hour >= 22 || hour < 7) {
             // Nightmode
-            brightness = ${night_brightness};
-            volume = ${night_volume};
+            if (id(day_night_mode) != 2) {
+              id(day_night_mode) = 2;
+              brightness = ${night_brightness};
+              volume = ${night_volume};
+              id(set_brightness).execute(brightness);
+              id(set_volume).execute(volume);
+            }
           } else {
             // Daymode
-            brightness = ${day_brightness};
-            volume = ${day_volume};
+            if (id(day_night_mode) != 1) {
+              id(day_night_mode) = 1;
+              brightness = ${day_brightness};
+              volume = ${day_volume};
+              id(set_brightness).execute(brightness);
+              id(set_volume).execute(volume);
+            }
           }
-          id(set_brightness).execute(brightness);
-          id(set_volume).execute(volume);
-# Nur wenn nicht manuell der Bildschirm ausgemacht wurde! Oder das turn_on rausbringen
 
 script:
   - id: draw_display
@@ -901,6 +910,11 @@ globals:
     type: int
     restore_value: false
     initial_value: ${not_ready_phase_id}
+  - id: day_night_mode
+    type: int
+    restore_value: false
+    initial_value: "0"  # 0 init, 1 day, 2 night
+  # Global variables for the timers
   - id: global_first_active_timer
     type: voice_assistant::Timer
     restore_value: false
@@ -1033,6 +1047,7 @@ color:
   - id: font_color
     hex: ${font_color}
 
+#braucht es das hier?
 spi:
   - id: spi_bus
     clk_pin: 7
