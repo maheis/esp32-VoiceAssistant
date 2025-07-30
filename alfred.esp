@@ -140,6 +140,16 @@ button:
     id: factory_reset_button
     internal: true
 
+sensor:
+  - platform: template
+    id: sunrise_time
+    update_interval: 60s
+    internal: true
+  - platform: template
+    id: sunset_time
+    update_interval: 60s
+    internal: true
+
 binary_sensor:
   # left_top_button
   - id: left_top_button
@@ -395,7 +405,7 @@ speaker:
 time:
   - platform: homeassistant
     id: ha_time
-
+    
 ###
 
 media_player:
@@ -1070,26 +1080,31 @@ display:
         lambda: |-
           it.fill(id(dark_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_idle), ImageAlign::CENTER);
+
           it.strftime((320 / 2), -10, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
-          id(draw_timer_timeline).execute();
+
           id(draw_active_timer_widget).execute();
+          id(draw_timer_timeline).execute();
       - id: listening_page
         lambda: |-
           it.fill(id(light_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_listening), ImageAlign::CENTER);
+
           id(draw_timer_timeline).execute();
       - id: thinking_page
         lambda: |-
           it.fill(id(light_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_thinking), ImageAlign::CENTER);
-          it.printf((320 / 2), 25, id(font_text), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_request).state.c_str());
+
           id(draw_timer_timeline).execute();
       - id: replying_page
         lambda: |-
           it.fill(id(light_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_replying), ImageAlign::CENTER);
+
           it.printf((320 / 2), 25, id(font_text), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_request).state.c_str());
           it.printf((320 / 2), 195, id(font_text), id(font_color), TextAlign::TOP_CENTER, "%s", id(text_response).state.c_str());
+
           id(draw_timer_timeline).execute();
       - id: timer_finished_page
         lambda: |-
@@ -1099,6 +1114,8 @@ display:
         lambda: |-
           it.fill(id(dark_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_error), ImageAlign::CENTER);
+
+          id(draw_timer_timeline).execute();
       - id: no_ha_page
         lambda: |-
           it.fill(id(dark_background));
@@ -1115,13 +1132,16 @@ display:
         lambda: |-
           it.fill(id(dark_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_muted), ImageAlign::CENTER);
+
           it.strftime((320 / 2), -10, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
-          id(draw_timer_timeline).execute();
+
           id(draw_active_timer_widget).execute();
+          id(draw_timer_timeline).execute();
       - id: settings_page
         lambda: |-
           it.fill(id(dark_background));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_settings), ImageAlign::CENTER);
+          
           it.printf((320 / 2), 0, id(font_settings), id(font_color), TextAlign::TOP_CENTER, "Settings");
           
           int volume = id(speaker_media_player).volume * 100;
@@ -1131,4 +1151,3 @@ display:
           it.printf((320 / 2), 150, id(font_settings), id(font_color), TextAlign::TOP_CENTER, "%i%%", brightness);
           
           id(draw_timer_timeline).execute();
-          id(draw_active_timer_widget).execute();
