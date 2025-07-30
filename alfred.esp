@@ -13,6 +13,15 @@ substitutions:
 
   ###
 
+  # 07-22
+  day_brightness: "70"
+  day_volume: "70"
+  # 22-07
+  night_brightness: "30"
+  night_volume: "30"
+
+  ###
+
   VERSION: '0.0.1'
 
   error_no_wifi_file: http://${ip_address_HA}:8123/local/images/error-no-wifi.png
@@ -331,7 +340,7 @@ i2c:
     sda_pullup_enabled: true
     scl_pullup_enabled: true
     frequency: 100kHz
-
+  
   - id: bus_b
     sda: GPIO41
     scl: GPIO40
@@ -558,6 +567,22 @@ interval:
   - interval: 60s
     then:
       - script.execute: draw_display
+      - lambda: |-
+          auto hour = id(ha_time).now().hour;
+          int brightness = 70; // Default brightness
+          int volume = 70; // Default volume
+          if (hour >= 22 || hour < 7) {
+            // Nightmode
+            brightness = ${night_brightness};
+            volume = ${night_volume};
+          } else {
+            // Daymode
+            brightness = ${day_brightness};
+            volume = ${day_volume};
+          }
+          id(set_brightness).execute(brightness);
+          id(set_volume).execute(volume);
+# Nur wenn nicht manuell der Bildschirm ausgemacht wurde! Oder das turn_on rausbringen
 
 script:
   - id: draw_display
