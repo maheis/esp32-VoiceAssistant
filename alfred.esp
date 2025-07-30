@@ -5,9 +5,11 @@ substitutions:
   friendly_name: tc14
   #Change this to your Home Assistant IP address
   ip_address_HA: 192.168.5.45
+
   # !secret wifi_ssid
   # !secret wifi_password
   # !secret wifi_domain
+
   # !secret enctryption_key_vaa
   # !secret ota_password_vaa
 
@@ -43,7 +45,11 @@ substitutions:
 
   background_light: "F9F9F9"
   background_dark: "212121"
+
   font_color: "FFB74D"
+  font_main: Ubuntu
+  font_mono: Ubuntu Mono
+  font_allowed_characters: " !#$%&\"'()*+,-.\\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]_abcdefghijklmnopqrstuvwxyz{|}°ÄÖÜäöüß"
 
   phase_idle: "1"
   phase_listening: "2"
@@ -54,11 +60,6 @@ substitutions:
   phase_muted: "12"
   phase_timer_finished: "20"
   phase_settings: "99"
-
-  allowed_characters: " !#$%&\"'()*+,-.\\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]_abcdefghijklmnopqrstuvwxyz{|}°ÄÖÜäöüß"
-
-  font_main: Ubuntu
-  font_mono: Ubuntu Mono
 
 esphome:
   name: ${name}
@@ -1002,28 +1003,28 @@ font:
       weight: 700
     id: font_time
     size: 127
-    glyphs: ${allowed_characters}
+    glyphs: ${font_allowed_characters}
   - file:
       type: gfonts
       family: ${font_mono}
       weight: 700
     id: font_timer
     size: 70
-    glyphs: ${allowed_characters}
+    glyphs: ${font_allowed_characters}
   - file:
       type: gfonts
       family: ${font_mono}
       weight: 700
     id: font_settings
     size: 50
-    glyphs: ${allowed_characters}
+    glyphs: ${font_allowed_characters}
   - file:
       type: gfonts
       family: ${font_main}
       weight: 300
     id: font_text
     size: 20
-    glyphs: ${allowed_characters}
+    glyphs: ${font_allowed_characters}
 
 text_sensor:
   - id: text_request
