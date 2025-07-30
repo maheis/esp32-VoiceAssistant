@@ -378,11 +378,8 @@ time:
 ###
 
 media_player:
-  - platform: speaker
-    name: None
-    id: speaker_media_player
-    volume_min: 0.5
-    volume_max: 0.8
+  - id: speaker_media_player
+    platform: speaker
     announcement_pipeline:
       speaker: box_speaker
       format: FLAC
@@ -434,6 +431,7 @@ media_player:
 micro_wake_word:
   id: mww
   models:
+    - okay_nabu
     - hey_mycroft
     - hey_jarvis
     - alexa
