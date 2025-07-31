@@ -484,9 +484,9 @@ font:
   - file:
       type: gfonts
       family: ${font_main}
-      weight: 300
+      weight: 500
     id: font_text
-    size: 20
+    size: 16
     glyphs: ${font_allowed_characters}
 
 color:
