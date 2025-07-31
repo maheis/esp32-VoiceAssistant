@@ -27,23 +27,23 @@ substitutions:
   ### Only touch if you know what you are doing ###
 
   VERSION: '0.1.0'
+  
+  image_error_no_wifi: https://github.com/maheis/esp32-VoiceAssistant/raw/main//images/error-no-wifi.png
+  image_error_no_ha: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/error-no-ha.png
+  image_error: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/error.png
+  image_idle: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/idle.png
+  image_listening: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/listening.png
+  image_loading: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/loading.png
+  image_muted: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/muted.png
+  image_replying: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/replying.png
+  image_settings: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/settings.png
+  image_thinking: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/thinking.png
+  image_timer_finished: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/timer_finished.png
 
-  image_error_no_wifi: https://github.com/maheis/esp32-VoiceAssistant/tree/main/images/error-no-wifi.png
-  image_error_no_ha: https://github.com/maheis/esp32-VoiceAssistant/tree/main/images/error-no-ha.png
-  image_error: https://github.com/maheis/esp32-VoiceAssistant/tree/main/images/error.png
-  image_idle: https://github.com/maheis/esp32-VoiceAssistant/tree/main/images/idle.png
-  image_listening: https://github.com/maheis/esp32-VoiceAssistant/tree/main/images/listening.png
-  image_loading: https://github.com/maheis/esp32-VoiceAssistant/tree/main/images/loading.png
-  image_muted: https://github.com/maheis/esp32-VoiceAssistant/tree/main/images/muted.png
-  image_replying: https://github.com/maheis/esp32-VoiceAssistant/tree/main/images/replying.png
-  image_settings: https://github.com/maheis/esp32-VoiceAssistant/tree/main/images/settings.png
-  image_thinking: https://github.com/maheis/esp32-VoiceAssistant/tree/main/images/thinking.png
-  image_timer_finished: https://github.com/maheis/esp32-VoiceAssistant/tree/main/images/timer_finished.png
-
-  sound_error: https://github.com/maheis/esp32-VoiceAssistant/tree/main/sounds/error.mp3
-  sound_success: https://github.com/maheis/esp32-VoiceAssistant/tree/main/sounds/success.mp3
-  sound_timer_finished: https://github.com/maheis/esp32-VoiceAssistant/tree/main/sounds/zoot_chest_long.mp3
-  sound_wakeword: https://github.com/maheis/esp32-VoiceAssistant/tree/main/sounds/wakeword.mp3
+  sound_error: https://github.com/maheis/esp32-VoiceAssistant/raw/main/sounds/error.mp3
+  sound_success: https://github.com/maheis/esp32-VoiceAssistant/raw/main/sounds/success.mp3
+  sound_timer_finished: https://github.com/maheis/esp32-VoiceAssistant/raw/main/sounds/zoot_chest_long.mp3
+  sound_wakeword: https://github.com/maheis/esp32-VoiceAssistant/raw/main/sounds/wakeword.mp3
 
   background_light: "F9F9F9"
   background_dark: "212121"
