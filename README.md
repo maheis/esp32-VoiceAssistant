@@ -10,6 +10,6 @@ This project is a voice assistant for the ESP32 platform, designed to be used wi
 
 ## Inspired and forks from these ...
 
-[wake-word-voice-assistants von esphome](https://github.com/esphome/wake-word-voice-assistants)
+[wake-word-voice-assistants](https://github.com/esphome/wake-word-voice-assistants) by esphome
 
-[ESP32-S3-Box-3-Voice-Assistant-Sensor-Dock von AlmostInteractive](https://github.com/AlmostInteractive/ESP32-S3-Box-3-Voice-Assistant-Sensor-Dock))
+[ESP32-S3-Box-3-Voice-Assistant-Sensor-Dock](https://github.com/AlmostInteractive/ESP32-S3-Box-3-Voice-Assistant-Sensor-Dock) by AlmostInteractive
