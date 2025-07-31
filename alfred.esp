@@ -1,4 +1,7 @@
 substitutions:
+
+  ### REQUIRED SETTINGS ###
+
   # This is the name of the device, it will be used as Network Name
   name: tc14
   # This is the friendly name of the device, it will be used in Home Assistant
@@ -13,7 +16,7 @@ substitutions:
   # !secret enctryption_key_vaa
   # !secret ota_password_vaa
 
-  ###
+  ### OPTIONAL SETTINGS ###
 
   # 07-22
   day_brightness: "70"
@@ -22,7 +25,8 @@ substitutions:
   night_brightness: "30"
   night_volume: "30"
 
-  ###
+  #################################################
+  ### Only touch if you know what you are doing ###
 
   VERSION: '0.0.1'
 
