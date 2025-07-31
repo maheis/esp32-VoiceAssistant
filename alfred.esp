@@ -407,57 +407,46 @@ globals:
 image:
   - file: ${image_error}
     id: image_error
-    resize: 320x240
     type: RGB
     transparency: alpha_channel
   - file: ${image_error_no_wifi}
     id: image_error_no_wifi
-    resize: 320x240
     type: RGB
     transparency: alpha_channel
   - file: ${image_error_no_ha}
     id: image_error_no_ha
-    resize: 320x240
     type: RGB
     transparency: alpha_channel
   - file: ${image_idle}
     id: image_idle
-    resize: 320x240
     type: RGB
     transparency: alpha_channel
   - file: ${image_listening}
     id: image_listening
-    resize: 320x240
     type: RGB
     transparency: alpha_channel
   - file: ${image_loading}
     id: image_loading
-    resize: 320x240
     type: RGB
     transparency: alpha_channel
   - file: ${image_muted}
     id: image_muted
-    resize: 320x240
     type: RGB
     transparency: alpha_channel
   - file: ${image_replying}
     id: image_replying
-    resize: 320x240
     type: RGB
     transparency: alpha_channel
   - file: ${image_settings}
     id: image_settings
-    resize: 320x240
     type: RGB
     transparency: alpha_channel
   - file: ${image_thinking}
     id: image_thinking
-    resize: 320x240
     type: RGB
     transparency: alpha_channel
   - file: ${image_timer_finished}
     id: image_timer_finished
-    resize: 320x240
     type: RGB
     transparency: alpha_channel
 
