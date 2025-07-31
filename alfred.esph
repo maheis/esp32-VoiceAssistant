@@ -28,7 +28,7 @@ substitutions:
 
   VERSION: '0.1.0'
   
-  image_error_no_wifi: https://github.com/maheis/esp32-VoiceAssistant/raw/main//images/error-no-wifi.png
+  image_error_no_wifi: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/error-no-wifi.png
   image_error_no_ha: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/error-no-ha.png
   image_error: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/error.png
   image_idle: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/idle.png
