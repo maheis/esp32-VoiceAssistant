@@ -378,6 +378,7 @@ time:
 ###
 
 globals:
+  # Global variables for the voice assistant phases
   - id: init_in_progress
     type: bool
     restore_value: false
@@ -386,6 +387,12 @@ globals:
     type: int
     restore_value: false
     initial_value: ${phase_not_ready}
+  # Global variables for the display pages
+  - id: settings_page_shown
+    type: int
+    restore_value: false
+    initial_value: "0"
+  # Global variables for the day/night mode
   - id: day_night_mode
     type: int
     restore_value: false
@@ -662,6 +669,7 @@ interval:
   - interval: 60s
     then:
       - lambda: |-
+          // Day/Night mode handling
           auto hour = id(ha_time).now().hour;
           int brightness;
           int volume;
@@ -684,6 +692,15 @@ interval:
               id(set_volume).execute(volume);
             }
           }
+          // Reset Settings page shown variable
+          if(id(voice_assistant_phase) == ${phase_settings}) {
+            id(settings_page_shown) = 1;
+          }
+          if (id(settings_page_shown) == 1) {
+            id(settings_page_shown) = 0;
+            id(voice_assistant_phase) = -1;
+          }
+      - script.execute: set_idle_or_mute_or_settings_phase
       - script.execute: draw_display
 
 script:
