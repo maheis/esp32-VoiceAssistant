@@ -508,6 +508,7 @@ color:
 media_player:
   - id: speaker_media_player
     platform: speaker
+    name: none
     announcement_pipeline:
       speaker: box_speaker
       format: FLAC
