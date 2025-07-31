@@ -1061,7 +1061,7 @@ display:
           it.fill(id(background_dark));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_idle), ImageAlign::CENTER);
 
-          it.strftime((320 / 2), -10, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
+          it.strftime((320 / 2), -10, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H %M", id(ha_time).now());
 
           id(draw_active_timer_widget).execute();
           id(draw_timer_timeline).execute();
@@ -1113,7 +1113,7 @@ display:
           it.fill(id(background_dark));
           it.image((it.get_width() / 2), (it.get_height() / 2), id(image_muted), ImageAlign::CENTER);
 
-          it.strftime((320 / 2), -10, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H:%M", id(ha_time).now());
+          it.strftime((320 / 2), -10, id(font_time), id(font_color), TextAlign::TOP_CENTER, "%H %M", id(ha_time).now());
 
           id(draw_active_timer_widget).execute();
           id(draw_timer_timeline).execute();
