@@ -6,8 +6,6 @@ substitutions:
   name: tc14
   # This is the friendly name of the device, it will be used in Home Assistant
   friendly_name: tc14
-  #Change this to your Home Assistant IP address
-  ip_address_HA: 192.168.5.45
 
   # !secret wifi_ssid
   # !secret wifi_password
@@ -30,22 +28,22 @@ substitutions:
 
   VERSION: '0.1.0'
 
-  image_error_no_wifi: http://${ip_address_HA}:8123/local/images/error-no-wifi.png
-  image_error_no_ha: http://${ip_address_HA}:8123/local/images/error-no-ha.png
-  image_error: http://${ip_address_HA}:8123/local/images/error.png
-  image_idle: http://${ip_address_HA}:8123/local/images/idle.png
-  image_listening: http://${ip_address_HA}:8123/local/images/listening.png
-  image_loading: http://${ip_address_HA}:8123/local/images/loading.png
-  image_muted: http://${ip_address_HA}:8123/local/images/muted.png
-  image_replying: http://${ip_address_HA}:8123/local/images/replying.png
-  image_settings: http://${ip_address_HA}:8123/local/images/settings.png
-  image_thinking: http://${ip_address_HA}:8123/local/images/thinking.png
-  image_timer_finished: http://${ip_address_HA}:8123/local/images/timer_finished.png
+  image_error_no_wifi: https://github.com/maheis/esp32-VoiceAssistant/tree/main/imageserror-no-wifi.png
+  image_error_no_ha: https://github.com/maheis/esp32-VoiceAssistant/tree/main/imageserror-no-ha.png
+  image_error: https://github.com/maheis/esp32-VoiceAssistant/tree/main/imageserror.png
+  image_idle: https://github.com/maheis/esp32-VoiceAssistant/tree/main/imagesidle.png
+  image_listening: https://github.com/maheis/esp32-VoiceAssistant/tree/main/imageslistening.png
+  image_loading: https://github.com/maheis/esp32-VoiceAssistant/tree/main/imagesloading.png
+  image_muted: https://github.com/maheis/esp32-VoiceAssistant/tree/main/imagesmuted.png
+  image_replying: https://github.com/maheis/esp32-VoiceAssistant/tree/main/imagesreplying.png
+  image_settings: https://github.com/maheis/esp32-VoiceAssistant/tree/main/imagessettings.png
+  image_thinking: https://github.com/maheis/esp32-VoiceAssistant/tree/main/imagesthinking.png
+  image_timer_finished: https://github.com/maheis/esp32-VoiceAssistant/tree/main/imagestimer_finished.png
 
-  sound_error: http://${ip_address_HA}:8123/local/sounds/error.mp3
-  sound_success: http://${ip_address_HA}:8123/local/sounds/success.mp3
-  sound_timer_finished: http://${ip_address_HA}:8123/local/sounds/zoot_chest_long.mp3
-  sound_wakeword: http://${ip_address_HA}:8123/local/sounds/wakeword.mp3
+  sound_error: https://github.com/maheis/esp32-VoiceAssistant/tree/main/sounds/error.mp3
+  sound_success: https://github.com/maheis/esp32-VoiceAssistant/tree/main/sounds/success.mp3
+  sound_timer_finished: https://github.com/maheis/esp32-VoiceAssistant/tree/main/sounds/zoot_chest_long.mp3
+  sound_wakeword: https://github.com/maheis/esp32-VoiceAssistant/tree/main/sounds/wakeword.mp3
 
   background_light: "F9F9F9"
   background_dark: "212121"
