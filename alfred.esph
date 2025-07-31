@@ -28,7 +28,7 @@ substitutions:
   #################################################
   ### Only touch if you know what you are doing ###
 
-  VERSION: '0.0.1'
+  VERSION: '0.1.0'
 
   image_error_no_wifi: http://${ip_address_HA}:8123/local/images/error-no-wifi.png
   image_error_no_ha: http://${ip_address_HA}:8123/local/images/error-no-ha.png
