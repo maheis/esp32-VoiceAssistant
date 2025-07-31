@@ -6,9 +6,7 @@ This project is a voice assistant for the ESP32 platform, designed to be used wi
 
 ## Hardware
 
-ESP32-S3-BOX-3
-
-<https://github.com/espressif/esp-box/blob/master/docs/hardware_overview/esp32_s3_box_3/hardware_overview_for_box_3.md>
+[ESP32-S3-BOX-3]<https://github.com/espressif/esp-box/blob/master/docs/hardware_overview/esp32_s3_box_3/hardware_overview_for_box_3.md>
 
 ## Inspired and forks from these ...
 
