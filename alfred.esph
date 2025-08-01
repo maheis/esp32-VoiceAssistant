@@ -26,7 +26,7 @@ substitutions:
   #################################################
   ### Only touch if you know what you are doing ###
 
-  VERSION: '0.1.0'
+  VERSION: '0.1.1'
   
   image_error_no_wifi: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/error-no-wifi.png
   image_error_no_ha: https://github.com/maheis/esp32-VoiceAssistant/raw/main/images/error-no-ha.png
