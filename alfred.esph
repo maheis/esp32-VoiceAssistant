@@ -317,6 +317,12 @@ light:
     restore_mode: RESTORE_DEFAULT_ON
     default_transition_length: 250ms
 
+spi:
+  # Component display.ili9xxx requires component spi
+  - id: spi_bus
+    clk_pin: 7
+    mosi_pin: 6
+
 i2c:
   - id: i2c_bus_a
     scl: GPIO18
@@ -1071,12 +1077,6 @@ text_sensor:
           std::string truncated = esphome::str_truncate(name.c_str(),31);
           id(text_response).state = (truncated+"...").c_str();
         }
-
-spi:
-  # Component display.ili9xxx requires component spi
-  - id: spi_bus
-    clk_pin: 7
-    mosi_pin: 6
 
 display:
   - id: s3_box_lcd
