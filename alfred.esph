@@ -314,7 +314,7 @@ output:
 light:
   - id: led
     platform: monochromatic
-    name: "Screen"
+    name: Screen
     icon: "mdi:television"
     entity_category: config
     output: backlight_output
@@ -394,11 +394,19 @@ globals:
     type: int
     restore_value: false
     initial_value: "0"
-  # Global variables for the day/night mode
+  # Global variables for display testimony
   - id: day_night_mode
     type: int
     restore_value: false
     initial_value: "0"  # 0 init, 1 day, 2 night
+  - id: screen_on_when_wake_word
+    type: int
+    restore_value: false
+    initial_value: "0"  # 0 off, 1 on
+  - id: screen_state
+    type: int
+    restore_value: false
+    initial_value: "0"  # 0 off, 1 on
   # Global variables for the timers
   - id: global_first_active_timer
     type: voice_assistant::Timer
@@ -575,6 +583,18 @@ voice_assistant:
   auto_gain: 31dBFS
   volume_multiplier: 2.0
   on_listening:
+    - if:
+        condition:
+          lambda: return id(screen_on_when_wake_word) == 1;
+        then:
+          - if:
+              condition:
+                light.is_on: led
+              then:
+                - lambda: id(screen_state) = 1;
+              else:
+                - lambda: id(screen_state) = 0;
+          - light.turn_on: led
     - text_sensor.template.publish:
         id: text_request
         state: "..."
@@ -610,6 +630,7 @@ voice_assistant:
                 media_player.is_announcing:
             - not:
                 speaker.is_playing:
+    # HIER ist das die lösung oder war es das was ich schon probiert habe?
     # Restart only mWW if enabled; streaming wake words automatically restart
     - if:
         condition:
@@ -626,6 +647,15 @@ voice_assistant:
     - text_sensor.template.publish:
         id: text_response
         state: ""
+    - if:
+        condition:
+          lambda: return id(screen_on_when_wake_word) == 1;
+        then:
+          - if:
+              condition:
+                - lambda: return id(screen_state) == 0;
+              then:
+                - light.turn_off: led
   on_error:
     - if:
         condition:
@@ -939,6 +969,17 @@ switch:
       - microphone.mute:
       - lambda: id(voice_assistant_phase) = ${phase_muted};
       - script.execute: draw_display
+  - id: switch_screen_on_when_wake_word
+    platform: template
+    name: "Screen on, when wake word is detected"
+    icon: "mdi:lightbulb-alert"
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    entity_category: config
+    on_turn_off:
+      - lambda: id(screen_on_when_wake_word) = 0;
+    on_turn_on:
+      - lambda: id(screen_on_when_wake_word) = 1;
   - id: timer_ringing
     platform: template
     optimistic: true
