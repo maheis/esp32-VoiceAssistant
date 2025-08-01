@@ -18,11 +18,11 @@ substitutions:
 
   # 07-22
   day_brightness: "70"
-  day_volume: "70"
+  day_volume: "75"
   # 22-07
   night_brightness: "30"
-  night_volume: "30"
-
+  night_volume: "50" # Below 50%, the speaker may no longer working.
+  
   #################################################
   ### Only touch if you know what you are doing ###
 
@@ -224,10 +224,10 @@ binary_sensor:
             then:
               - lambda: |-
                   int volume = round(id(speaker_media_player).volume * 100.0);
-                  if (volume > 0) {
+                  if (volume > 50) {
                     volume -= 5;
-                    if (volume < 0)
-                      volume = 0;
+                    if (volume < 50)
+                      volume = 50;
                     id(set_volume).execute(volume);
                   }
               - delay: 55ms
