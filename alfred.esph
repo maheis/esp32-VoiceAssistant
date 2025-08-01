@@ -5,7 +5,7 @@ substitutions:
   # This is the name of the device, it will be used as Network Name
   name: tc14
   # This is the friendly name of the device, it will be used in Home Assistant
-  friendly_name: tc14
+  friendly_name: TC14
 
   # !secret wifi_ssid
   # !secret wifi_password
@@ -579,9 +579,9 @@ voice_assistant:
   microphone: box_mic
   media_player: speaker_media_player
   micro_wake_word: mww
-  noise_suppression_level: 2
+  noise_suppression_level: 4
   auto_gain: 31dBFS
-  volume_multiplier: 2.0
+  volume_multiplier: 64.0
   on_listening:
     - if:
         condition:
