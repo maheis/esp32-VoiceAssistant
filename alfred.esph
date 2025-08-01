@@ -129,6 +129,77 @@ touchscreen:
       number: GPIO3
       ignore_strapping_warning: true
 
+light:
+  - id: led
+    platform: monochromatic
+    name: Screen
+    icon: "mdi:television"
+    entity_category: config
+    output: backlight_output
+    restore_mode: RESTORE_DEFAULT_ON
+    default_transition_length: 250ms
+
+spi:
+  # Component display.ili9xxx requires component spi
+  - id: spi_bus
+    clk_pin: 7
+    mosi_pin: 6
+
+output:
+  - id: backlight_output
+    platform: ledc
+    pin: GPIO47
+
+i2c:
+  - id: i2c_bus_a
+    scl: GPIO18
+    sda: GPIO8
+    scan: false
+    sda_pullup_enabled: true
+    scl_pullup_enabled: true
+    frequency: 100kHz
+
+i2s_audio:
+  - id: i2s_audio_bus
+    i2s_lrclk_pin:
+      number: GPIO45
+      ignore_strapping_warning: true
+    i2s_bclk_pin: GPIO17
+    i2s_mclk_pin: GPIO2
+
+audio_adc:
+  - id: es7210_adc
+    platform: es7210
+    i2c_id: i2c_bus_a
+    bits_per_sample: 16bit
+    sample_rate: 16000
+
+audio_dac:
+  - id: es8311_dac
+    platform: es8311
+    i2c_id: i2c_bus_a
+    bits_per_sample: 16bit
+    sample_rate: 48000
+
+microphone:
+  - id: box_mic
+    platform: i2s_audio
+    sample_rate: 16000
+    i2s_din_pin: GPIO16
+    bits_per_sample: 16bit
+    adc_type: external
+
+speaker:
+  - id: box_speaker
+    platform: i2s_audio
+    i2s_dout_pin: GPIO15
+    dac_type: external
+    sample_rate: 48000
+    bits_per_sample: 16bit
+    channel: left
+    audio_dac: es8311_dac
+    buffer_duration: 100ms
+
 button:
   - id: factory_reset_button
     platform: factory_reset
@@ -301,77 +372,6 @@ binary_sensor:
                   }
               - delay: 333ms
               - script.execute: draw_display
-
-output:
-  - id: backlight_output
-    platform: ledc
-    pin: GPIO47
-
-light:
-  - id: led
-    platform: monochromatic
-    name: Screen
-    icon: "mdi:television"
-    entity_category: config
-    output: backlight_output
-    restore_mode: RESTORE_DEFAULT_ON
-    default_transition_length: 250ms
-
-spi:
-  # Component display.ili9xxx requires component spi
-  - id: spi_bus
-    clk_pin: 7
-    mosi_pin: 6
-
-i2c:
-  - id: i2c_bus_a
-    scl: GPIO18
-    sda: GPIO8
-    scan: false
-    sda_pullup_enabled: true
-    scl_pullup_enabled: true
-    frequency: 100kHz
-
-i2s_audio:
-  - id: i2s_audio_bus
-    i2s_lrclk_pin:
-      number: GPIO45
-      ignore_strapping_warning: true
-    i2s_bclk_pin: GPIO17
-    i2s_mclk_pin: GPIO2
-
-audio_adc:
-  - id: es7210_adc
-    platform: es7210
-    i2c_id: i2c_bus_a
-    bits_per_sample: 16bit
-    sample_rate: 16000
-
-audio_dac:
-  - id: es8311_dac
-    platform: es8311
-    i2c_id: i2c_bus_a
-    bits_per_sample: 16bit
-    sample_rate: 48000
-
-microphone:
-  - id: box_mic
-    platform: i2s_audio
-    sample_rate: 16000
-    i2s_din_pin: GPIO16
-    bits_per_sample: 16bit
-    adc_type: external
-
-speaker:
-  - id: box_speaker
-    platform: i2s_audio
-    i2s_dout_pin: GPIO15
-    dac_type: external
-    sample_rate: 48000
-    bits_per_sample: 16bit
-    channel: left
-    audio_dac: es8311_dac
-    buffer_duration: 100ms
 
 ###
 
